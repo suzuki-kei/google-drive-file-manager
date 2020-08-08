@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      fieldset {
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+      #generate {
+        float: right;
+      }
+    </style>
+    <script>
+      window.addEventListener("load", function() {
+        generate.addEventListener("click", function() {
+          var enableGenerateButton = function() {
+            generate.disabled = ""
+            generate.value = "Generate"
+          }
+          var disableGenerateButton = function() {
+            generate.disabled = "disabled"
+            generate.value = "Generating..."
+          }
+          var onSuccess = function() {
+            enableGenerateButton()
+          }
+          var onFailure = function(e) {
+            alert("ERROR: " + e)
+            enableGenerateButton()
+          }
+          var options = {
+            rootFolderId: rootFolderId.value,
+            maxDepth: maxDepth.value,
+            pathSeparator: pathSeparator.value,
+            includeFiles: includeFiles.checked,
+            includeFolders: includeFolders.checked,
+          }
+          disableGenerateButton()
+          google.script.run.withSuccessHandler(onSuccess)
+                           .withFailureHandler(onFailure)
+                           .onGenerateButtonClicked(options)
+        })
+      })
+    </script>
+  </head>
+  <body>
+    <fieldset>
+      <legend>General options</legend>
+      <div>
+        <label for="rootFolderId">Root folder: </label>
+        <select id="rootFolderId">
+          <option value="<?= driveRootFolderId ?>">Drive Root: <?= driveRootFolderId ?></option>
+          <option selected="selected" value="<?= currentFolderId ?>">Current folder: <?= currentFolderId ?></option>
+        </select>
+      </div>
+      <div>
+        <label for="maxDepth">Max depth:</label>
+        <input id="maxDepth" type="text" value="<?= maxDepth ?>" />
+      </div>
+      <div>
+        <label for="pathSeparator">Path separator: </label>
+        <input id="pathSeparator" type="text" value="<?= pathSeparator ?>" />
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Row options</legend>
+      <div>
+        <input id="includeFiles" type="checkbox" checked="<?= includeFiles ?>" />
+        <label for="includeFiles">Include files</label>
+      </div>
+      <div>
+        <input id="includeFolders" type="checkbox" checked="<?= includeFolders ?>" />
+        <label for="includeFolders">Include folders</label>
+      </div>
+    </fieldset>
+    <div>
+      <input id="generate" type="button" value="Generate" />
+    </div>
+  </body>
+</html>
