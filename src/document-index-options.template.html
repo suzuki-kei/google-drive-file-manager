@@ -32,6 +32,7 @@
                     const options = {
                         rootFolderId: rootFolderId.value,
                         maxDepth: maxDepth.value,
+                        outputSheetName: outputSheetName.value,
                         pathSeparator: pathSeparator.value,
                         includeFiles: includeFiles.checked,
                         includeFolders: includeFolders.checked,
@@ -39,7 +40,7 @@
                     disableGenerateButton()
                     google.script.run.withSuccessHandler(onSuccess)
                                      .withFailureHandler(onFailure)
-                                     .onGenerateButtonClicked(options)
+                                     .DocumentIndex_onGenerateButtonClicked(options)
                 })
             })
         </script>
