@@ -1,11 +1,15 @@
 # google-drive-file-manager
 
-## Install
+## setup
 
     npm install
     npm run clasp login
 
-## Push to Google Apps Script
+## pull
+
+    git pull
+
+## push
 
     npm run clasp status
     npm run clasp push
