@@ -167,18 +167,8 @@ function initializeSheet(sheet) {
 }
 
 function generateHeaderRow(sheet, filePaths) {
-    var headers = ["No.", "Type", "MIME Type", "Full Path"]
-
-    var maxDepth = 0
-    for (var i = 0; i < filePaths.length; i++) {
-        maxDepth = Math.max(maxDepth, filePaths[i].parents.length + 1)
-    }
-    for (var i = 0; i < maxDepth; i++) {
-        headers.push("Path (Level " + i + ")")
-    }
-
-    var row = 1
-    var range = sheet.getRange(row, 1, 1, headers.length)
+    var headers = ["No.", "Type", "MIME Type", "File Path"]
+    var range = sheet.getRange(1, 1, 1, headers.length)
     range.setValues([headers])
     range.setBackground("orange")
     range.setHorizontalAlignment("center")
@@ -207,25 +197,25 @@ function generateValueRow(sheet, filePath, pathSeparator, index, row) {
             Cells.setText(range, filePath.file.getMimeType())
         }
     }
-    function setFullPathCell(column) {
-        var value = Files.join(filePath.routes, pathSeparator)
-        var url = filePath.file.getUrl()
-        var range = sheet.getRange(row, column)
-        Cells.setTextLink(range, url, value)
-    }
-    function setPathCells(column) {
+    function setFilePathCell(column) {
+        var richText = SpreadsheetApp.newRichTextValue()
+        richText.setText(Files.join(filePath.routes, pathSeparator))
+
+        var startOffset = 0
         for (var i = 0; i < filePath.routes.length; i++) {
-            var range = sheet.getRange(row, column++)
             var route = filePath.routes[i]
-            Cells.setTextLink(range, route.getUrl(), route.getName())
+            var endOffset = startOffset + route.getName().length
+            richText.setLinkUrl(startOffset, endOffset, route.getUrl())
+            startOffset = endOffset + pathSeparator.length
         }
+        var range = sheet.getRange(row, column)
+        range.setRichTextValue(richText.build())
     }
 
     var column = 1
     setNoCell(column++)
     setTypeCell(column++)
     setMimeTypeCell(column++)
-    setFullPathCell(column++)
-    setPathCells(column++)
+    setFilePathCell(column++)
 }
 
