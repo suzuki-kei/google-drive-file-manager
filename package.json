@@ -1,0 +1,11 @@
+{
+  "name": "google-drive-file-manager",
+  "version": "0.0.0",
+  "description": "Manage Google Drive files.",
+  "main": "main.gs",
+  "scripts": {
+    "test": "echo OK"
+  },
+  "author": "SUZUKI Kei",
+  "license": "MIT"
+}
