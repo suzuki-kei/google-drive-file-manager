@@ -1,16 +1,22 @@
 # google-drive-file-manager
 
-## setup
+## 初期設定
 
     npm install
     npm run clasp login
 
-## pull
+## 各種コマンド
 
-    git pull
+clasp のヘルプを表示する:
 
-## push
+    $ npm run clasp help
 
-    npm run clasp status
-    npm run clasp push
+script.google.com に push する:
+
+    $ npm run clasp status
+    $ npm run clasp push
+
+ブラウザで開く:
+
+    $ npm run clasp open
 
