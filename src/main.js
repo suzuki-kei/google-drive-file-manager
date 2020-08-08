@@ -56,7 +56,8 @@ var Cells = {
 }
 
 function onScheduleTriggered() {
-    var sheet = SpreadsheetApp.getActiveSheet()
+    var spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+    var sheet = spreadsheet.getSheetByName("Document Index")
     var rootFolder = DriveApp.getFolderById(Files.getCurrentFolder().getId())
     var maxDepth = DEFAULT_MAX_DEPTH
     var pathSeparator = DEFAULT_PATH_SEPARATOR
