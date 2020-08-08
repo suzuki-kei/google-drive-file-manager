@@ -23,8 +23,8 @@ var Files = {
         return DriveApp.getRootFolder()
     },
     getCurrentFolder: function() {
-        var spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-        var spreadsheetFile = DriveApp.getFileById(spreadsheet.getId())
+        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+        const spreadsheetFile = DriveApp.getFileById(spreadsheet.getId())
         return spreadsheetFile.getParents().next()
     },
     join: function(paths, pathSeparator) {
@@ -56,13 +56,13 @@ var Cells = {
 }
 
 function onScheduleTriggered() {
-    var spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-    var sheet = spreadsheet.getSheetByName("Document Index")
-    var rootFolder = DriveApp.getFolderById(Files.getCurrentFolder().getId())
-    var maxDepth = DEFAULT_MAX_DEPTH
-    var pathSeparator = DEFAULT_PATH_SEPARATOR
-    var includeFiles = true
-    var includeFolders = true
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+    const sheet = spreadsheet.getSheetByName("Document Index")
+    const rootFolder = DriveApp.getFolderById(Files.getCurrentFolder().getId())
+    const maxDepth = DEFAULT_MAX_DEPTH
+    const pathSeparator = DEFAULT_PATH_SEPARATOR
+    const includeFiles = true
+    const includeFolders = true
     generateDocumentIndex(
         sheet,
         rootFolder,
@@ -77,13 +77,13 @@ function onOpen() {
 }
 
 function setupUi(ui) {
-    var menu = ui.createMenu("Document Index")
+    const menu = ui.createMenu("Document Index")
     menu.addItem("Generate Document Index...", "openDocumentIndexOptionsDialog")
     menu.addToUi()
 }
 
 function openDocumentIndexOptionsDialog() {
-    var template = HtmlService.createTemplateFromFile("document-index-options.template.html")
+    const template = HtmlService.createTemplateFromFile("document-index-options.template.html")
     template.includeFiles = "checked"
     template.includeFolders = "checked"
     template.maxDepth = DEFAULT_MAX_DEPTH
@@ -91,7 +91,7 @@ function openDocumentIndexOptionsDialog() {
     template.driveRootFolderId = Files.getRootFolder().getId()
     template.currentFolderId = Files.getCurrentFolder().getId()
 
-    var ui = SpreadsheetApp.getUi()
+    const ui = SpreadsheetApp.getUi()
     ui.showModelessDialog(template.evaluate(), "Generate Document Index")
 }
 
@@ -106,12 +106,12 @@ function onGenerateButtonClicked(options) {
 }
 
 function generateDocumentIndex(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders) {
-    var files = getFiles(rootFolder, maxDepth, includeFiles, includeFolders)
+    const files = getFiles(rootFolder, maxDepth, includeFiles, includeFolders)
     updateSheet(sheet, files, pathSeparator)
 }
 
 function getFiles(rootFolder, maxDepth, includeFiles, includeFolders) {
-    var files = []
+    const files = []
     traverseDrive(rootFolder, maxDepth, function(parents, file) {
         if (Files.isFile(file) && !includeFiles) {
             return
@@ -127,8 +127,8 @@ function getFiles(rootFolder, maxDepth, includeFiles, includeFolders) {
     })
 
     files.sort(function(lhs, rhs) {
-        var lhsSortKey = Files.join(lhs.routes)
-        var rhsSortKey = Files.join(rhs.routes)
+        const lhsSortKey = Files.join(lhs.routes)
+        const rhsSortKey = Files.join(rhs.routes)
         return lhsSortKey.localeCompare(rhsSortKey)
     })
     return files
@@ -139,16 +139,16 @@ function traverseDrive(rootFolder, maxDepth, callback) {
         if (depth > maxDepth) {
             return
         }
-        var query = "'" + folder.getId() + "' in parents"
-        var subFolders = DriveApp.searchFolders(query)
+        const query = "'" + folder.getId() + "' in parents"
+        const subFolders = DriveApp.searchFolders(query)
         while (subFolders.hasNext()) {
-            var subFolder = subFolders.next()
+            const subFolder = subFolders.next()
             callback(parents.concat(folder), subFolder)
             traverse(parents.concat(folder), subFolder, depth + 1, maxDepth, callback)
         }
-        var files = DriveApp.searchFiles(query)
+        const files = DriveApp.searchFiles(query)
         while (files.hasNext()) {
-            var file = files.next()
+            const file = files.next()
             callback(parents.concat(folder), file)
         }
     }
@@ -168,8 +168,8 @@ function initializeSheet(sheet) {
 }
 
 function generateHeaderRow(sheet, filePaths) {
-    var headers = ["No.", "Type", "MIME Type", "File Path", "File Name"]
-    var range = sheet.getRange(1, 1, 1, headers.length)
+    const headers = ["No.", "Type", "MIME Type", "File Path", "File Name"]
+    const range = sheet.getRange(1, 1, 1, headers.length)
     range.setValues([headers])
     range.setBackground("orange")
     range.setHorizontalAlignment("center")
@@ -184,36 +184,36 @@ function generateValueRows(sheet, filePaths, pathSeparator) {
 
 function generateValueRow(sheet, filePath, pathSeparator, index, row) {
     function setNoCell(column) {
-        var range = sheet.getRange(row, column)
+        const range = sheet.getRange(row, column)
         Cells.setNumber(range, index + 1)
     }
     function setTypeCell(column) {
-        var range = sheet.getRange(row, column)
-        var value = Files.isFile(filePath.file) ? "File" : "Directory"
+        const range = sheet.getRange(row, column)
+        const value = Files.isFile(filePath.file) ? "File" : "Directory"
         Cells.setText(range, value)
     }
     function setMimeTypeCell(column) {
-        var range = sheet.getRange(row, column)
+        const range = sheet.getRange(row, column)
         if (Files.isFile(filePath.file)) {
             Cells.setText(range, filePath.file.getMimeType())
         }
     }
     function setFilePathCell(column) {
-        var richText = SpreadsheetApp.newRichTextValue()
+        const richText = SpreadsheetApp.newRichTextValue()
         richText.setText(Files.join(filePath.routes, pathSeparator))
 
         var startOffset = 0
         for (var i = 0; i < filePath.routes.length; i++) {
-            var route = filePath.routes[i]
-            var endOffset = startOffset + route.getName().length
+            const route = filePath.routes[i]
+            const endOffset = startOffset + route.getName().length
             richText.setLinkUrl(startOffset, endOffset, route.getUrl())
             startOffset = endOffset + pathSeparator.length
         }
-        var range = sheet.getRange(row, column)
+        const range = sheet.getRange(row, column)
         range.setRichTextValue(richText.build())
     }
     function setFileNameCell(column) {
-        var range = sheet.getRange(row, column)
+        const range = sheet.getRange(row, column)
         Cells.setTextLink(range, filePath.file.getUrl(), filePath.file.getName())
     }
 

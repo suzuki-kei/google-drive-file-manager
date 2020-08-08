@@ -14,22 +14,22 @@
         <script>
             window.addEventListener("load", function() {
                 generate.addEventListener("click", function() {
-                    var enableGenerateButton = function() {
+                    const enableGenerateButton = function() {
                         generate.disabled = ""
                         generate.value = "Generate"
                     }
-                    var disableGenerateButton = function() {
+                    const disableGenerateButton = function() {
                         generate.disabled = "disabled"
                         generate.value = "Generating..."
                     }
-                    var onSuccess = function() {
+                    const onSuccess = function() {
                         enableGenerateButton()
                     }
-                    var onFailure = function(e) {
+                    const onFailure = function(e) {
                         alert("ERROR: " + e)
                         enableGenerateButton()
                     }
-                    var options = {
+                    const options = {
                         rootFolderId: rootFolderId.value,
                         maxDepth: maxDepth.value,
                         pathSeparator: pathSeparator.value,
