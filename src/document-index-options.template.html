@@ -46,7 +46,7 @@
     </head>
     <body>
         <fieldset>
-            <legend>General options</legend>
+            <legend>Traverse options</legend>
             <div>
                 <label for="rootFolderId">Root folder: </label>
                 <select id="rootFolderId">
@@ -58,13 +58,17 @@
                 <label for="maxDepth">Max depth:</label>
                 <input id="maxDepth" type="text" value="<?= maxDepth ?>" />
             </div>
+        </fieldset>
+        <fieldset>
+            <legend>Output options</legend>
+            <div>
+                <label for="outputSheetName">Output sheet name: </label>
+                <input id="outputSheetName" type="text" value="<?= outputSheetName ?>" />
+            </div>
             <div>
                 <label for="pathSeparator">Path separator: </label>
                 <input id="pathSeparator" type="text" value="<?= pathSeparator ?>" />
             </div>
-        </fieldset>
-        <fieldset>
-            <legend>Row options</legend>
             <div>
                 <input id="includeFiles" type="checkbox" checked="<?= includeFiles ?>" />
                 <label for="includeFiles">Include files</label>

@@ -78,21 +78,26 @@ function onOpen() {
 
 function setupUi(ui) {
     const menu = ui.createMenu("Document Index")
-    menu.addItem("Generate Document Index...", "openDocumentIndexOptionsDialog")
+    menu.addItem("Generate...", "openDocumentIndexOptionsDialog")
     menu.addToUi()
 }
 
 function openDocumentIndexOptionsDialog() {
     const template = HtmlService.createTemplateFromFile("document-index-options.template.html")
-    template.includeFiles = "checked"
-    template.includeFolders = "checked"
-    template.maxDepth = DEFAULT_MAX_DEPTH
-    template.pathSeparator = DEFAULT_PATH_SEPARATOR
     template.driveRootFolderId = Files.getRootFolder().getId()
     template.currentFolderId = Files.getCurrentFolder().getId()
+    template.maxDepth = DEFAULT_MAX_DEPTH
+    template.outputSheetName = SpreadsheetApp.getActiveSheet().getName()
+    template.pathSeparator = DEFAULT_PATH_SEPARATOR
+    template.includeFiles = "checked"
+    template.includeFolders = "checked"
+
+    const htmlOutput = template.evaluate()
+                               .setWidth(600)
+                               .setHeight(300)
 
     const ui = SpreadsheetApp.getUi()
-    ui.showModelessDialog(template.evaluate(), "Generate Document Index")
+    ui.showModelessDialog(htmlOutput, "Document Index")
 }
 
 function onGenerateButtonClicked(options) {
