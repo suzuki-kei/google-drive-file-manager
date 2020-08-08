@@ -7,5 +7,8 @@
     "test": "echo OK"
   },
   "author": "SUZUKI Kei",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@google/clasp": "^2.3.0"
+  }
 }
