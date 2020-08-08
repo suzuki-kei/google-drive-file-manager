@@ -167,7 +167,7 @@ function initializeSheet(sheet) {
 }
 
 function generateHeaderRow(sheet, filePaths) {
-    var headers = ["No.", "Type", "MIME Type", "File Path"]
+    var headers = ["No.", "Type", "MIME Type", "File Path", "File Name"]
     var range = sheet.getRange(1, 1, 1, headers.length)
     range.setValues([headers])
     range.setBackground("orange")
@@ -211,11 +211,16 @@ function generateValueRow(sheet, filePath, pathSeparator, index, row) {
         var range = sheet.getRange(row, column)
         range.setRichTextValue(richText.build())
     }
+    function setFileNameCell(column) {
+        var range = sheet.getRange(row, column)
+        Cells.setTextLink(range, filePath.file.getUrl(), filePath.file.getName())
+    }
 
     var column = 1
     setNoCell(column++)
     setTypeCell(column++)
     setMimeTypeCell(column++)
     setFilePathCell(column++)
+    setFileNameCell(column++)
 }
 
