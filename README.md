@@ -2,8 +2,13 @@
 
 ## 初期設定
 
-    npm install
-    npm run clasp login
+npm で依存パッケージをインストールする:
+
+    $ npm install
+
+clasp でログインする:
+
+    $ npm run clasp login
 
 ## 各種コマンド
 
