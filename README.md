@@ -39,11 +39,15 @@ Google スプレッドシートのメニューから以下の操作が可能に�
 
     $ npm run clasp login
 
-(6) clasp で push します.
+(6) push 先の scriptId を設定します.
+
+    $ npm run clasp setting scriptId xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+(7) clasp で push します.
 
     $ npm run clasp push
 
-(7) スプレッドシートを開き直します.
+(8) スプレッドシートを開き直します.
 
 スプレッドシートを開き直すと, メニューに "Document Index" が表示されます.
 
