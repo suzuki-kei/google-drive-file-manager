@@ -8,20 +8,6 @@ const DocumentIndex = {
 
     /**
      *
-     * ディレクトリの深さのデフォルト.
-     *
-     */
-    DEFAULT_MAX_DEPTH: 5,
-
-    /**
-     *
-     * パスの区切り文字のデフォルト.
-     *
-     */
-    DEFAULT_PATH_SEPARATOR: " > ",
-
-    /**
-     *
      * メニューを作成する.
      *
      * @return {Menu}
@@ -41,18 +27,38 @@ const DocumentIndex = {
      *
      */
     openGenerationDialog: function() {
+        const settings = this.getSettings()
         const templateFileName = "document-index.generation-dialog.template.html"
         const template = HtmlService.createTemplateFromFile(templateFileName)
-        template.rootFolderUrl = Paths.getCurrentFolder().getUrl()
-        template.maxDepth = this.DEFAULT_MAX_DEPTH
-        template.outputSheetName = SpreadsheetApp.getActiveSheet().getName()
-        template.pathSeparator = this.DEFAULT_PATH_SEPARATOR
-        template.includeFiles = true
-        template.includeFolders = true
+        template.rootFolderUrl = settings["root-folder-url"]
+        template.maxDepth = settings["max-depth"]
+        template.outputSheetName = settings["output-sheet-name"]
+        template.pathSeparator = settings["path-separator"]
+        template.includeFiles = settings["include-files"]
+        template.includeFolders = settings["include-folders"]
 
         const htmlOutput = template.evaluate().setWidth(600).setHeight(300)
         const ui = SpreadsheetApp.getUi()
         ui.showModelessDialog(htmlOutput, "Document Index")
+    },
+
+    /**
+     *
+     * 設定を取得する.
+     *
+     * @return {object}
+     *     設定.
+     *
+     */
+    getSettings: function() {
+        const settings = {}
+        settings["root-folder-url"] = Paths.getCurrentFolder().getUrl()
+        settings["max-depth"] = 5
+        settings["output-sheet-name"] = "Document Index"
+        settings["path-separator"] = " > "
+        settings["include-files"] = true
+        settings["include-folders"] = true
+        return settings
     },
 
     /**
@@ -364,19 +370,14 @@ function DocumentIndex_onGenerateButtonClicked(options) {
  *
  */
 function DocumentIndex_onScheduleTriggered() {
+    const settings = DocumentIndex.getSettings()
     const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-    const sheet = spreadsheet.getSheetByName("Document Index")
-    const rootFolder = DriveApp.getFolderById(Paths.getCurrentFolder().getId())
-    const maxDepth = DocumentIndex.DEFAULT_MAX_DEPTH
-    const pathSeparator = DocumentIndex.DEFAULT_PATH_SEPARATOR
-    const includeFiles = true
-    const includeFolders = true
     DocumentIndex.generate(
-        sheet,
-        rootFolder,
-        maxDepth,
-        pathSeparator,
-        includeFiles,
-        includeFolders)
+        spreadsheet.getSheetByName(settings["output-sheet-name"]),
+        Paths.getFolderByUrl(settings["root-folder-url"]),
+        settings["max-depth"],
+        settings["path-separator"],
+        settings["include-files"],
+        settings["include-folders"])
 }
 
