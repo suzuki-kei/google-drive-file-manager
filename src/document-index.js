@@ -51,14 +51,28 @@ const DocumentIndex = {
      *
      */
     getSettings: function() {
-        const settings = {}
-        settings["root-folder-url"] = Paths.getCurrentFolder().getUrl()
-        settings["max-depth"] = 5
-        settings["output-sheet-name"] = "Document Index"
-        settings["path-separator"] = " > "
-        settings["include-files"] = true
-        settings["include-folders"] = true
-        return settings
+        function fromDefaults() {
+            const settings = {}
+            settings["root-folder-url"] = Paths.getCurrentFolder().getUrl()
+            settings["max-depth"] = 5
+            settings["output-sheet-name"] = "Document Index"
+            settings["path-separator"] = " > "
+            settings["include-files"] = true
+            settings["include-folders"] = true
+            return settings
+        }
+        function fromSheet() {
+            try {
+                const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+                const sheet = spreadsheet.getSheetByName("Settings")
+                const settings = Settings.load(sheet, "Key", "Type", "Value")
+                return Settings.scope(settings, "document-index")
+            }
+            catch (exception) {
+                return {}
+            }
+        }
+        return Settings.merge({}, fromDefaults(), fromSheet())
     },
 
     /**
