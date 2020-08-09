@@ -48,8 +48,8 @@ const DocumentIndex = {
         template.maxDepth = this.DEFAULT_MAX_DEPTH
         template.outputSheetName = SpreadsheetApp.getActiveSheet().getName()
         template.pathSeparator = this.DEFAULT_PATH_SEPARATOR
-        template.includeFiles = "checked"
-        template.includeFolders = "checked"
+        template.includeFiles = true
+        template.includeFolders = true
 
         const htmlOutput = template.evaluate().setWidth(600).setHeight(300)
         const ui = SpreadsheetApp.getUi()

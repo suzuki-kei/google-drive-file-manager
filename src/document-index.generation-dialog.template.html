@@ -71,11 +71,19 @@
                 <input id="pathSeparator" type="text" value="<?= pathSeparator ?>" />
             </div>
             <div>
-                <input id="includeFiles" type="checkbox" checked="<?= includeFiles ?>" />
+                <? if (includeFiles) { ?>
+                    <input id="includeFiles" type="checkbox" checked="checked" />
+                <? } else { ?>
+                    <input id="includeFiles" type="checkbox" />
+                <? } ?>
                 <label for="includeFiles">Include files</label>
             </div>
             <div>
-                <input id="includeFolders" type="checkbox" checked="<?= includeFolders ?>" />
+                <? if (includeFolders) { ?>
+                    <input id="includeFolders" type="checkbox" checked="checked" />
+                <? } else { ?>
+                    <input id="includeFolders" type="checkbox" />
+                <? } ?>
                 <label for="includeFolders">Include folders</label>
             </div>
         </fieldset>
