@@ -30,7 +30,7 @@
                         enableGenerateButton()
                     }
                     const options = {
-                        rootFolderId: rootFolderId.value,
+                        rootFolderUrl: rootFolderUrl.value,
                         maxDepth: maxDepth.value,
                         outputSheetName: outputSheetName.value,
                         pathSeparator: pathSeparator.value,
@@ -49,11 +49,8 @@
         <fieldset>
             <legend>Traverse options</legend>
             <div>
-                <label for="rootFolderId">Root folder: </label>
-                <select id="rootFolderId">
-                    <option value="<?= driveRootFolderId ?>">Drive Root: <?= driveRootFolderId ?></option>
-                    <option selected="selected" value="<?= currentFolderId ?>">Current folder: <?= currentFolderId ?></option>
-                </select>
+                <label for="rootFolderUrl">Root folder URL: </label>
+                <input id="rootFolderUrl" type="text" value="<?= rootFolderUrl ?>" />
             </div>
             <div>
                 <label for="maxDepth">Max depth:</label>

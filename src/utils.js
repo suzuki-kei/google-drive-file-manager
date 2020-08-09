@@ -71,6 +71,23 @@ var Paths = {
 
     /**
      *
+     * フォルダの URL から Folder オブジェクトを取得する.
+     *
+     * @param {string} url
+     *     フォルダの URL.
+     *
+     * @return {File}
+     *     Folder オブジェクト.
+     *
+     */
+    getFolderByUrl: function(url) {
+        const urlPrefix = "https://drive.google.com/drive/folders/"
+        const folderId = url.replace(urlPrefix, "").split("?")[0]
+        return DriveApp.getFolderById(folderId)
+    },
+
+    /**
+     *
      * パスを連結する.
      *
      * @param {Array.<File>} paths

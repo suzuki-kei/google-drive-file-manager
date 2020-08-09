@@ -43,8 +43,7 @@ const DocumentIndex = {
     openGenerationDialog: function() {
         const templateFileName = "document-index.generation-dialog.template.html"
         const template = HtmlService.createTemplateFromFile(templateFileName)
-        template.driveRootFolderId = Paths.getRootFolder().getId()
-        template.currentFolderId = Paths.getCurrentFolder().getId()
+        template.rootFolderUrl = Paths.getCurrentFolder().getUrl()
         template.maxDepth = this.DEFAULT_MAX_DEPTH
         template.outputSheetName = SpreadsheetApp.getActiveSheet().getName()
         template.pathSeparator = this.DEFAULT_PATH_SEPARATOR
@@ -67,7 +66,7 @@ const DocumentIndex = {
     onGenerateButtonClicked: function(options) {
         const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
         const sheet = spreadsheet.getSheetByName(options.outputSheetName)
-        const rootFolder = DriveApp.getFolderById(options.rootFolderId)
+        const rootFolder = Paths.getFolderByUrl(options.rootFolderUrl)
         this.generate(
             sheet,
             rootFolder,
