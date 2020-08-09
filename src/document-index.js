@@ -41,7 +41,7 @@ const DocumentIndex = {
      *
      */
     openGenerationDialog: function() {
-        const templateFileName = "document-index-options.template.html"
+        const templateFileName = "document-index.generation-dialog.template.html"
         const template = HtmlService.createTemplateFromFile(templateFileName)
         template.driveRootFolderId = Paths.getRootFolder().getId()
         template.currentFolderId = Paths.getCurrentFolder().getId()
