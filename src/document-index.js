@@ -69,6 +69,7 @@ const DocumentIndex = {
                 return Settings.scope(settings, "document-index")
             }
             catch (exception) {
+                console.warn("Failed to get settings from sheet: %s", exception)
                 return {}
             }
         }
