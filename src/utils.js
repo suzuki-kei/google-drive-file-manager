@@ -9,7 +9,7 @@
  * Google Drive のファイルパスに関するユーティリティ.
  *
  */
-var Paths = {
+const Paths = {
 
     /**
      *
@@ -151,7 +151,7 @@ const Sheets = {
  * Google Spreadsheet のセルに関するユーティリティ.
  *
  */
-var Cells = {
+const Cells = {
 
     /**
      *
