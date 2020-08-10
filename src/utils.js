@@ -121,6 +121,31 @@ const Sheets = {
 
     /**
      *
+     * 指定した名前のシートを取得もしくは作成する.
+     *
+     * @param {Spreadsheet} spreadsheet
+     *     捜査対象の Spreadsheet.
+     *
+     * @param {string} sheetName
+     *     シートの名前.
+     *
+     * @return {Sheet}
+     *     取得もしくは作成したシート.
+     *
+     */
+    getOrCreateSheetByName: function(spreadsheet, sheetName) {
+        const sheet = spreadsheet.getSheetByName(sheetName)
+        if (sheet) {
+            return sheet
+        } else {
+            const newSheet = spreadsheet.insertSheet()
+            newSheet.setName(sheetName)
+            return newSheet
+        }
+    },
+
+    /**
+     *
      * Range の内容を辞書の配列として取得する.
      *
      * @param {Range} range

@@ -86,7 +86,7 @@ const DocumentIndex = {
      */
     onGenerateButtonClicked: function(options) {
         const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-        const sheet = spreadsheet.getSheetByName(options.outputSheetName)
+        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, options.outputSheetName)
         const rootFolder = Paths.getFolderByUrl(options.rootFolderUrl)
         this.generate(
             sheet,
