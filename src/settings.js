@@ -8,49 +8,52 @@ const Settings = {
 
     /**
      *
-     * 指定した Sheet から設定情報を読み込む.
+     * Sheet から設定情報を読み込む.
+     *
+     * Sheet の 1 行目はヘッダ, 2 列目以降を値として扱う.
      *
      * @param {Sheet} sheet
      *     設定情報を保持する Sheet.
-     *     シートの 1 行目をヘッダとして扱う.
      *
-     * @param {string} keyColumnName
-     *     プロパティのキーを保持する列のヘッダ名.
+     * @param {string} keyColumn
+     *     設定のキー名を保持する列の名前.
      *
-     * @param {string} typeColumnName
-     *     プロパティのデータ型を保持する列のヘッダ名.
+     * @param {string} typeColumn
+     *     設定のデータ型を保持する列の名前.
      *
-     * @param {string} valueColumnName
-     *     プロパティの値を保持する列のヘッダ名.
+     * @param {string} valueColumn
+     *     設定の値を保持する列の名前.
      *
-     * @return {key: string, value: object}
+     * @return {{key: string, value: object}}
      *     設定情報を保持するオブジェクト.
+     *     key は keyColumn で指定された列の値.
+     *     value は valueColumn で指定された列の値.
+     *
+     * @throws {string}
+     *     typeColumn で指定されるデータ型と実際の値が異なる場合.
      *
      */
-    load: function(sheet, keyColumnName, typeColumnName, valueColumnName) {
+    fromSheet: function(sheet, keyColumn, typeColumn, valueColumn) {
         const range = sheet.getDataRange()
-        const values = range.getValues()
+        return this.fromRange(range, keyColumn, typeColumn, valueColumn)
+    },
 
-        const properties = []
-        for (var row = 1; row < range.getNumRows(); row++) {
-            const setting = {}
-            for (var column = 0; column < range.getNumColumns(); column++) {
-                setting[values[0][column]] = values[row][column]
-            }
-            properties.push(setting)
-        }
+    fromRange: function(range, keyColumn, typeColumn, valueColumn) {
+        const dictArray = Sheets.getTableAsDictArray(range)
+        return this.fromDictArray(dictArray, keyColumn, typeColumn, valueColumn)
+    },
 
+    fromDictArray: function(dictArray, keyColumn, typeColumn, valueColumn) {
         const settings = {}
-        for (var i = 0; i < properties.length; i++) {
-            const key = properties[i][keyColumnName]
-            const type = properties[i][typeColumnName]
-            const value = properties[i][valueColumnName]
+        for (var i = 0; i < dictArray.length; i++) {
+            const key = dictArray[i][keyColumn]
+            const type = dictArray[i][typeColumn]
+            const value = dictArray[i][valueColumn]
             if (type != typeof(value)) {
-                throw "" + key + " is must be " + type + ", but was " + typeof(value) + "."
+                throw "The " + key + " is must be " + type + ", but was " + typeof(value) + "."
             }
             settings[key] = value
         }
-
         return settings
     },
 

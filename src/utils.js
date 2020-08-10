@@ -114,6 +114,40 @@ var Paths = {
 
 /**
  *
+ * Google Spreadsheet のシートに関するユーティリティ.
+ *
+ */
+const Sheets = {
+
+    /**
+     *
+     * Range の内容を辞書の配列として取得する.
+     *
+     * @param {Range} range
+     *     値を取得する範囲.
+     *
+     * @return {Array.<object>}
+     *     range の 1 行目をキーとした辞書の配列.
+     *
+     */
+    getTableAsDictArray: function(range) {
+        const values = range.getValues()
+        const dictArray = []
+
+        for (var row = 1; row < range.getNumRows(); row++) {
+            const dict = {}
+            for (var column = 0; column < range.getNumColumns(); column++) {
+                dict[values[0][column]] = values[row][column]
+            }
+            dictArray.push(dict)
+        }
+        return dictArray
+    },
+
+}
+
+/**
+ *
  * Google Spreadsheet のセルに関するユーティリティ.
  *
  */

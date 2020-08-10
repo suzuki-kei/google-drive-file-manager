@@ -65,7 +65,7 @@ const DocumentIndex = {
             try {
                 const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
                 const sheet = spreadsheet.getSheetByName("Settings")
-                const settings = Settings.load(sheet, "Key", "Type", "Value")
+                const settings = Settings.fromSheet(sheet, "Key", "Type", "Value")
                 return Settings.scope(settings, "document-index")
             }
             catch (exception) {
