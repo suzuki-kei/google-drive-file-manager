@@ -388,7 +388,7 @@ function DocumentIndex_onScheduleTriggered() {
     const settings = DocumentIndex.getSettings()
     const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
     DocumentIndex.generate(
-        spreadsheet.getSheetByName(settings["output-sheet-name"]),
+        Sheets.getOrCreateSheetByName(spreadsheet, settings["output-sheet-name"]),
         Paths.getFolderByUrl(settings["root-folder-url"]),
         settings["max-depth"],
         settings["path-separator"],
