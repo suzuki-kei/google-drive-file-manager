@@ -80,6 +80,7 @@ class Settings {
         this.initializeSheet(sheet)
         this.updateHeaderRow(sheet, keyColumn, typeColumn, valueColumn, descriptionColumn)
         this.updateValueRows(sheet, scopes)
+        this.doLayout(sheet)
     }
 
     /**
@@ -117,6 +118,18 @@ class Settings {
             Cells.setValue(sheet.getRange(i + 2, 3), this.definitions[i].value)
             Cells.setValue(sheet.getRange(i + 2, 4), this.definitions[i].description)
         }
+    }
+
+    /**
+     *
+     * TODO コメントを書く.
+     *
+     */
+    doLayout(sheet) {
+        const range = sheet.getDataRange()
+        range.setVerticalAlignment("top")
+        range.setHorizontalAlignment("left")
+        sheet.autoResizeColumns(range.getColumn(), range.getNumColumns())
     }
 
 }
