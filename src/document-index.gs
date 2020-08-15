@@ -86,6 +86,7 @@ const DocumentIndex = {
             options.pathSeparator,
             options.includeFiles,
             options.includeFolders)
+        sheet.activate()
     },
 
     /**
