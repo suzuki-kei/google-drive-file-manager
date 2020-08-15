@@ -18,7 +18,7 @@ const DocumentIndex = {
         const ui = SpreadsheetApp.getUi()
         const menu = ui.createMenu("Document Index")
         menu.addItem("Initialize settings", "DocumentIndex.initializeSettingsSheet")
-        menu.addItem("Generate...", "DocumentIndex.openGenerationDialog")
+        menu.addItem("Generate Document Index...", "DocumentIndex.openGenerationDialog")
         return menu
     },
 
