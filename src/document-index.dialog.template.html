@@ -7,29 +7,36 @@
                 margin-top: 1em;
                 margin-bottom: 1em;
             }
-            #generate {
+            .buttons {
                 float: right;
             }
         </style>
         <script>
             window.addEventListener("load", function() {
-                generate.addEventListener("click", function() {
-                    const enableGenerateButton = function() {
-                        generate.disabled = ""
-                        generate.value = "Generate"
-                    }
-                    const disableGenerateButton = function() {
-                        generate.disabled = "disabled"
-                        generate.value = "Generating..."
-                    }
-                    const onSuccess = function() {
-                        google.script.host.close()
-                    }
-                    const onFailure = function(e) {
-                        alert("ERROR: " + e)
-                        enableGenerateButton()
-                    }
-                    const options = {
+                const inputElements = [
+                    rootFolderUrl,
+                    maxDepth,
+                    outputSheetName,
+                    pathSeparator,
+                    includeFiles,
+                    includeFolders,
+                    saveSettings,
+                    generate,
+                ]
+                function enableForm() {
+                    const enable = _ => _.disabled = ""
+                    inputElements.forEach(enable)
+                }
+                function disableForm() {
+                    const disable = _ => _.disabled = "disabled"
+                    inputElements.forEach(disable)
+                }
+                function onFailure(e) {
+                    alert("ERROR: " + e)
+                    enableForm()
+                }
+                function getSettings() {
+                    return {
                         rootFolderUrl: rootFolderUrl.value,
                         maxDepth: maxDepth.value,
                         outputSheetName: outputSheetName.value,
@@ -37,10 +44,18 @@
                         includeFiles: includeFiles.checked,
                         includeFolders: includeFolders.checked,
                     }
-                    disableGenerateButton()
-                    google.script.run.withSuccessHandler(onSuccess)
+                }
+                saveSettings.addEventListener("click", function() {
+                    disableForm()
+                    google.script.run.withSuccessHandler(enableForm)
                                      .withFailureHandler(onFailure)
-                                     .DocumentIndex_onGenerateButtonClicked(options)
+                                     .DocumentIndex_saveSettings(getSettings())
+                })
+                generate.addEventListener("click", function() {
+                    disableForm()
+                    google.script.run.withSuccessHandler(google.script.host.close)
+                                     .withFailureHandler(onFailure)
+                                     .DocumentIndex_onGenerateButtonClicked(getSettings())
                 })
             })
         </script>
@@ -84,7 +99,8 @@
                 <label for="includeFolders">Include folders</label>
             </div>
         </fieldset>
-        <div>
+        <div class="buttons">
+            <input id="saveSettings" type="button" value="Save settings" />
             <input id="generate" type="button" value="Generate" />
         </div>
     </body>

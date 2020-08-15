@@ -16,20 +16,9 @@ const DocumentIndex = {
      */
     createMenu: function() {
         const ui = SpreadsheetApp.getUi()
-        const menu = ui.createMenu("Document Index")
-        menu.addItem("Initialize settings", "DocumentIndex.initializeSettingsSheet")
-        menu.addItem("Generate Document Index...", "DocumentIndex.openGenerationDialog")
+        const menu = ui.createMenu("File Manager")
+        menu.addItem("Document Index...", "DocumentIndex.openDialog")
         return menu
-    },
-
-    /**
-     *
-     * 設定情報を保持するシートを初期化する.
-     *
-     */
-    initializeSettingsSheet: function() {
-        const settings = new DocumentIndexSettings()
-        settings.save()
     },
 
     /**
@@ -37,9 +26,9 @@ const DocumentIndex = {
      * ドキュメントインデックス生成ダイアログを開く.
      *
      */
-    openGenerationDialog: function() {
+    openDialog: function() {
         const settings = this.getSettings()
-        const templateFileName = "document-index.generation-dialog.template.html"
+        const templateFileName = "document-index.dialog.template.html"
         const template = HtmlService.createTemplateFromFile(templateFileName)
         template.rootFolderUrl = settings.rootFolderUrl
         template.maxDepth = settings.maxDepth
@@ -365,6 +354,19 @@ function FilePath(file, parents, routes) {
     this.parents = parents
     this.routes = routes
     return this
+}
+
+/**
+ *
+ * TODO
+ *
+ */
+function DocumentIndex_saveSettings(newSettings) {
+    const settings = new DocumentIndexSettings()
+    for (var key in newSettings) {
+        settings[key] = newSettings[key]
+    }
+    settings.save()
 }
 
 /**
