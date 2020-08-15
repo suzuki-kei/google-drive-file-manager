@@ -162,6 +162,12 @@ class DocumentIndexSettings extends Settings {
                 description: "再帰的にサブフォルダを探索するときの最大の深さ.",
             },
             {
+                key: "outputSheetName",
+                type: "string",
+                value: "Document Index",
+                description: "結果を出力するシートの名前.",
+            },
+            {
                 key: "pathSeparator",
                 type: "string",
                 value: " > ",
@@ -178,12 +184,6 @@ class DocumentIndexSettings extends Settings {
                 type: "boolean",
                 value: true,
                 description: "結果にフォルダを含める場合に真.",
-            },
-            {
-                key: "outputSheetName",
-                type: "string",
-                value: "Document Index",
-                description: "結果を出力するシートの名前.",
             },
         ])
     }
