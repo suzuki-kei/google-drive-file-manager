@@ -221,6 +221,7 @@ const DocumentIndex = {
         this.initializeSheet(sheet)
         this.updateHeaderRow(sheet)
         this.updateValueRows(sheet, filePaths, pathSeparator)
+        this.doLayout(sheet)
     },
 
     /**
@@ -330,6 +331,17 @@ const DocumentIndex = {
         setMimeTypeCell(column++)
         setFilePathCell(column++)
         setFileNameCell(column++)
+    },
+
+    /**
+     *
+     * TODO コメントを書く.
+     *
+     */
+    doLayout: function(sheet) {
+        const range = sheet.getDataRange()
+        range.setVerticalAlignment("top")
+        sheet.autoResizeColumns(range.getColumn(), range.getNumColumns())
     },
 
 }
