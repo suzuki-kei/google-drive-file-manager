@@ -81,6 +81,7 @@ class Settings {
         this.updateHeaderRow(sheet, keyColumn, typeColumn, valueColumn, descriptionColumn)
         this.updateValueRows(sheet, scopes)
         this.doLayout(sheet)
+        sheet.activate()
     }
 
     /**
