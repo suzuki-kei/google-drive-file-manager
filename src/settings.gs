@@ -116,7 +116,7 @@ class Settings {
             const key = scopes.concat(this.definitions[i].key).join(".")
             Cells.setValue(sheet.getRange(i + 2, 1), key)
             Cells.setValue(sheet.getRange(i + 2, 2), this.definitions[i].type)
-            Cells.setValue(sheet.getRange(i + 2, 3), this.definitions[i].value)
+            Cells.setValue(sheet.getRange(i + 2, 3), this[this.definitions[i].key])
             Cells.setValue(sheet.getRange(i + 2, 4), this.definitions[i].description)
         }
     }
