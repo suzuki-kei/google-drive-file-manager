@@ -23,7 +23,7 @@
                         generate.value = "Generating..."
                     }
                     const onSuccess = function() {
-                        enableGenerateButton()
+                        google.script.host.close()
                     }
                     const onFailure = function(e) {
                         alert("ERROR: " + e)
