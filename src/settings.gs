@@ -34,7 +34,6 @@ class Settings {
      *     設定情報のスコープ.
      *     例えば ["A", "B"] を指定すると "A.B." から始まる設定のみ読み込む.
      *
-     *
      * @param {string} keyColumn
      *     設定のキーを保持する列の名前.
      *
