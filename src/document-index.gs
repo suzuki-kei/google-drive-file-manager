@@ -17,8 +17,19 @@ const DocumentIndex = {
     createMenu: function() {
         const ui = SpreadsheetApp.getUi()
         const menu = ui.createMenu("Document Index")
+        menu.addItem("Initialize settings", "DocumentIndex.initializeSettingsSheet")
         menu.addItem("Generate...", "DocumentIndex.openGenerationDialog")
         return menu
+    },
+
+    /**
+     *
+     * 設定情報を保持するシートを初期化する.
+     *
+     */
+    initializeSettingsSheet: function() {
+        const settings = new DocumentIndexSettings()
+        settings.save()
     },
 
     /**

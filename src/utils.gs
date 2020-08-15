@@ -180,6 +180,25 @@ const Cells = {
 
     /**
      *
+     * セルに値を設定する.
+     *
+     * セルのフォーマットは "自動" を設定する.
+     * セルのフォーマットを明示的に指定したい場合は他の関数を使用する必要がある.
+     *
+     * @param {Range} range
+     *     値を設定するセル.
+     *
+     * @param {object} value
+     *     設定する値.
+     *
+     */
+    setValue: function(range, value) {
+        range.setValue(value)
+        range.setNumberFormat("General")
+    },
+
+    /**
+     *
      * セルに数値として値を設定する.
      *
      * @param {Range} range

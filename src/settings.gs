@@ -15,6 +15,8 @@ class Settings {
      *
      */
     constructor(definitions) {
+        this.definitions = definitions
+
         for (var i = 0; i < definitions.length; i++) {
             this[definitions[i].key] = definitions[i].value
         }
@@ -64,6 +66,56 @@ class Settings {
                 throw "The " + key + " is must be " + type + ", but was " + typeof(value) + "."
             }
             this[key] = value
+        }
+    }
+
+    /**
+     *
+     * 設定情報をシートに保存する.
+     *
+     * TODO コメントを書く.
+     *
+     */
+    save(sheet, scopes, keyColumn, typeColumn, valueColumn, descriptionColumn) {
+        this.initializeSheet(sheet)
+        this.updateHeaderRow(sheet, keyColumn, typeColumn, valueColumn, descriptionColumn)
+        this.updateValueRows(sheet, scopes)
+    }
+
+    /**
+     *
+     * TODO コメントを書く.
+     *
+     */
+    initializeSheet(sheet) {
+        sheet.clear()
+    }
+
+    /**
+     *
+     * TODO コメントを書く.
+     *
+     */
+    updateHeaderRow(sheet, keyColumn, typeColumn, valueColumn, descriptionColumn) {
+        const headers = [keyColumn, typeColumn, valueColumn, descriptionColumn]
+        const range = sheet.getRange(1, 1, 1, headers.length)
+        range.setValues([headers])
+        range.setBackground("orange")
+        range.setHorizontalAlignment("center")
+    }
+
+    /**
+     *
+     * TODO コメントを書く.
+     *
+     */
+    updateValueRows(sheet, scopes) {
+        for (var i = 0; i < this.definitions.length; i++) {
+            const key = scopes.concat(this.definitions[i].key).join(".")
+            Cells.setValue(sheet.getRange(i + 2, 1), key)
+            Cells.setValue(sheet.getRange(i + 2, 2), this.definitions[i].type)
+            Cells.setValue(sheet.getRange(i + 2, 3), this.definitions[i].value)
+            Cells.setValue(sheet.getRange(i + 2, 4), this.definitions[i].description)
         }
     }
 
@@ -130,8 +182,22 @@ class DocumentIndexSettings extends Settings {
     load() {
         const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
         const sheet = spreadsheet.getSheetByName("Settings")
+        if (sheet) {
+            const scopes = ["FileManager", "DocumentIndex"]
+            super.load(sheet, scopes, "Key", "Type", "Value")
+        }
+    }
+
+    /**
+     *
+     * Sheet に設定情報を書き込む.
+     *
+     */
+    save() {
+        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, "Settings")
         const scopes = ["FileManager", "DocumentIndex"]
-        super.load(sheet, scopes, "Key", "Type", "Value")
+        super.save(sheet, scopes, "Key", "Type", "Value", "Description")
     }
 
 }
