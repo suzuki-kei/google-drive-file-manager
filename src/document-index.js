@@ -298,7 +298,8 @@ const DocumentIndex = {
      *     更新対象の Sheet の行インデックス.
      *
      */
-    updateValueRow: function(sheet, filePath, pathSeparator, row) { function setNoCell(column) {
+    updateValueRow: function(sheet, filePath, pathSeparator, row) {
+        function setNoCell(column) {
             const range = sheet.getRange(row, column)
             Cells.setNumber(range, "=ROW() - 1")
         }
