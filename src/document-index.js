@@ -30,12 +30,12 @@ const DocumentIndex = {
         const settings = this.getSettings()
         const templateFileName = "document-index.generation-dialog.template.html"
         const template = HtmlService.createTemplateFromFile(templateFileName)
-        template.rootFolderUrl = settings["root-folder-url"]
-        template.maxDepth = settings["max-depth"]
-        template.outputSheetName = settings["output-sheet-name"]
-        template.pathSeparator = settings["path-separator"]
-        template.includeFiles = settings["include-files"]
-        template.includeFolders = settings["include-folders"]
+        template.rootFolderUrl = settings.rootFolderUrl
+        template.maxDepth = settings.maxDepth
+        template.outputSheetName = settings.outputSheetName
+        template.pathSeparator = settings.pathSeparator
+        template.includeFiles = settings.includeFiles
+        template.includeFolders = settings.includeFolders
 
         const htmlOutput = template.evaluate().setWidth(600).setHeight(300)
         const ui = SpreadsheetApp.getUi()
@@ -51,29 +51,9 @@ const DocumentIndex = {
      *
      */
     getSettings: function() {
-        function fromDefaults() {
-            const settings = {}
-            settings["root-folder-url"] = Paths.getCurrentFolder().getUrl()
-            settings["max-depth"] = 5
-            settings["output-sheet-name"] = "Document Index"
-            settings["path-separator"] = " > "
-            settings["include-files"] = true
-            settings["include-folders"] = true
-            return settings
-        }
-        function fromSheet() {
-            try {
-                const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-                const sheet = spreadsheet.getSheetByName("Settings")
-                const settings = Settings.fromSheet(sheet, "Key", "Type", "Value")
-                return Settings.scope(settings, "document-index")
-            }
-            catch (exception) {
-                console.warn("Failed to get settings from sheet: %s", exception)
-                return {}
-            }
-        }
-        return Settings.merge({}, fromDefaults(), fromSheet())
+        const settings = new DocumentIndexSettings()
+        settings.load()
+        return settings
     },
 
     /**
@@ -389,11 +369,11 @@ function DocumentIndex_onScheduleTriggered() {
     const settings = DocumentIndex.getSettings()
     const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
     DocumentIndex.generate(
-        Sheets.getOrCreateSheetByName(spreadsheet, settings["output-sheet-name"]),
-        Paths.getFolderByUrl(settings["root-folder-url"]),
-        settings["max-depth"],
-        settings["path-separator"],
-        settings["include-files"],
-        settings["include-folders"])
+        Sheets.getOrCreateSheetByName(spreadsheet, settings.outputSheetName),
+        Paths.getFolderByUrl(settings.rootFolderUrl),
+        settings.maxDepth,
+        settings.pathSeparator,
+        settings.includeFiles,
+        settings.includeFolders)
 }
 
