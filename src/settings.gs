@@ -55,18 +55,18 @@ class Settings {
         const dictArray = Sheets.getTableAsDictArray(range)
         const scopePrefix = scopes.concat("").join(".")
 
-        for (var i = 0; i < dictArray.length; i++) {
-            if (!dictArray[i][keyColumn].startsWith(scopePrefix)) {
-                continue
+        dictArray.forEach(dict => {
+            if (!dict[keyColumn].startsWith(scopePrefix)) {
+                return
             }
-            const key = dictArray[i][keyColumn].substring(scopePrefix.length)
-            const type = dictArray[i][typeColumn]
-            const value = dictArray[i][valueColumn]
+            const key = dict[keyColumn].substring(scopePrefix.length)
+            const type = dict[typeColumn]
+            const value = dict[valueColumn]
             if (type != typeof(value)) {
                 throw "The " + key + " is must be " + type + ", but was " + typeof(value) + "."
             }
             this[key] = value
-        }
+        })
     }
 
     /**

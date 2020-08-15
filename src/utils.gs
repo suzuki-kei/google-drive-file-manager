@@ -103,10 +103,10 @@ const Paths = {
     join: function(paths, pathSeparator) {
         var value = ""
         var separator = ""
-        for (var i = 0; i < paths.length; i++) {
-            value += separator + paths[i].getName()
+        paths.forEach(path => {
+            value += separator + path.getName()
             separator = pathSeparator
-        }
+        })
         return value
     },
 

@@ -301,12 +301,11 @@ const DocumentIndex = {
             richText.setText(Paths.join(filePath.routes, pathSeparator))
 
             var startOffset = 0
-            for (var i = 0; i < filePath.routes.length; i++) {
-                const route = filePath.routes[i]
+            filePath.routes.forEach(route => {
                 const endOffset = startOffset + route.getName().length
                 richText.setLinkUrl(startOffset, endOffset, route.getUrl())
                 startOffset = endOffset + pathSeparator.length
-            }
+            })
             const range = sheet.getRange(row, column)
             range.setRichTextValue(richText.build())
         }
