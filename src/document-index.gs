@@ -223,7 +223,7 @@ class DocumentIndex {
         this.initializeSheet(sheet)
         this.updateHeaderRow(sheet)
         this.updateValueRows(sheet, filePaths, pathSeparator)
-        this.doLayout(sheet)
+        this.updateLayout(sheet)
     }
 
     /**
@@ -336,10 +336,13 @@ class DocumentIndex {
 
     /**
      *
-     * TODO コメントを書く.
+     * レイアウトを変更する.
+     *
+     * @param {Sheet} sheet
+     *     更新対象の Sheet.
      *
      */
-    static doLayout(sheet) {
+    static updateLayout(sheet) {
         const range = sheet.getDataRange()
         range.setVerticalAlignment("top")
         sheet.autoResizeColumns(range.getColumn(), range.getNumColumns())
