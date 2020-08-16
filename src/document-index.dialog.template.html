@@ -49,13 +49,13 @@
                     disableForm()
                     google.script.run.withSuccessHandler(enableForm)
                                      .withFailureHandler(onFailure)
-                                     .DocumentIndex_saveSettings(getSettings())
+                                     .DocumentIndex_onSaveSettingsClicked(getSettings())
                 })
                 generateDocumentIndex.addEventListener("click", () => {
                     disableForm()
                     google.script.run.withSuccessHandler(google.script.host.close)
                                      .withFailureHandler(onFailure)
-                                     .DocumentIndex_onGenerateButtonClicked(getSettings())
+                                     .DocumentIndex_onGenerateDocumentIndexClicked(getSettings())
                 })
             })
         </script>

@@ -70,24 +70,64 @@ class DocumentIndex {
 
     /**
      *
-     * ドキュメントインデックス生成ダイアログの "Generate" ボタンが押された時の処理.
+     * ダイアログの "Save settings" ボタンが押されたときの処理.
      *
-     * @param {object} options
-     *     ドキュメントインデックス生成ダイアログで指定されたオプション.
+     * @param {object} rawSettings
+     *     ダイアログで指定された設定情報.
+     *     DocumentIndexSettings ではなく通常のオブジェクト.
      *
      */
-    static onGenerateButtonClicked(options) {
+    static onSaveSettingsClicked(rawSettings) {
+        const settings = new DocumentIndexSettings()
+        for (let key in rawSettings) {
+            settings[key] = rawSettings[key]
+        }
+        settings.save()
+    }
+
+    /**
+     *
+     * ダイアログの "Generate document index" ボタンが押されたときの処理.
+     *
+     * @param {object} rawSettings
+     *     ダイアログで指定された設定情報.
+     *     DocumentIndexSettings ではなく通常のオブジェクト.
+     *
+     */
+    static onGenerateDocumentIndexClicked(rawSettings) {
         const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, options.outputSheetName)
-        const rootFolder = Paths.getFolderByUrl(options.rootFolderUrl)
+        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, rawSettings.outputSheetName)
+        const rootFolder = Paths.getFolderByUrl(rawSettings.rootFolderUrl)
         this.generate(
             sheet,
             rootFolder,
-            options.maxDepth,
-            options.pathSeparator,
-            options.includeFiles,
-            options.includeFolders)
+            rawSettings.maxDepth,
+            rawSettings.pathSeparator,
+            rawSettings.includeFiles,
+            rawSettings.includeFolders)
         sheet.activate()
+    }
+
+    /**
+     *
+     * デフォルトの設定でドキュメントインデックスを生成する.
+     *
+     * Google Apps Script のトリガーを用いて
+     * 定期的にドキュメントインデックスを自動更新するために利用する.
+     *
+     */
+    static onScheduleTriggered() {
+        const settings = this.getSettings()
+        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, settings.outputSheetName)
+        const rootFolder = Paths.getFolderByUrl(settings.rootFolderUrl)
+        this.generate(
+            sheet,
+            rootFolder,
+            settings.maxDepth,
+            settings.pathSeparator,
+            settings.includeFiles,
+            settings.includeFolders)
     }
 
     /**
@@ -381,31 +421,36 @@ class FilePath {
 
 /**
  *
- * TODO
+ * ダイアログの "Save settings" ボタンが押されたときの処理.
+ *
+ * コールバック関数のためトップレベルに定義している.
+ * ダイアログ側から google.script.run() によって呼び出される.
+ * 全ての処理を DocumentIndex.onSaveSettings() に移譲する.
+ *
+ * @param {object} rawSettings
+ *     ダイアログで指定された設定情報.
+ *     DocumentIndexSettings ではなく通常のオブジェクト.
  *
  */
-function DocumentIndex_saveSettings(newSettings) {
-    const settings = new DocumentIndexSettings()
-    for (let key in newSettings) {
-        settings[key] = newSettings[key]
-    }
-    settings.save()
+function DocumentIndex_onSaveSettingsClicked(rawSettings) {
+    DocumentIndex.onSaveSettingsClicked(rawSettings)
 }
 
 /**
  *
- * ドキュメントインデックス生成ダイアログで "生成" ボタンが押されたときの処理.
+ * ダイアログの "Generate document index" ボタンが押されたときの処理.
  *
  * コールバック関数のためトップレベルに定義する必要がある.
  * クライアントサイドから google.script.run() によって呼び出される.
  * 全ての処理を DocumentIndex.onGenerateButtonClicked() に移譲する.
  *
- * @param {object} options
- *     ドキュメントインデックス生成ダイアログで指定されたオプション.
+ * @param {object} rawSettings
+ *     ダイアログで指定された設定情報.
+ *     DocumentIndexSettings ではなく通常のオブジェクト.
  *
  */
-function DocumentIndex_onGenerateButtonClicked(options) {
-    DocumentIndex.onGenerateButtonClicked(options)
+function DocumentIndex_onGenerateDocumentIndexClicked(rawSettings) {
+    DocumentIndex.onGenerateDocumentIndexClicked(rawSettings)
 }
 
 /**
@@ -415,14 +460,6 @@ function DocumentIndex_onGenerateButtonClicked(options) {
  *
  */
 function DocumentIndex_onScheduleTriggered() {
-    const settings = DocumentIndex.getSettings()
-    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-    DocumentIndex.generate(
-        Sheets.getOrCreateSheetByName(spreadsheet, settings.outputSheetName),
-        Paths.getFolderByUrl(settings.rootFolderUrl),
-        settings.maxDepth,
-        settings.pathSeparator,
-        settings.includeFiles,
-        settings.includeFolders)
+    DocumentIndex.onScheduleTriggered()
 }
 
