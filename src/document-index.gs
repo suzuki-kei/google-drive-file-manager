@@ -46,8 +46,12 @@ class DocumentIndex {
      *
      * 設定を取得する.
      *
-     * @return {object}
+     * @return {DocumentIndexSettings}
      *     設定.
+     *
+     * @throws {Error}
+     *     何らかのエラーが発生した場合.
+     *     Settings.SheetNotFound が発生した場合は例外を無視してデフォルト値を返す.
      *
      */
     static getSettings() {
