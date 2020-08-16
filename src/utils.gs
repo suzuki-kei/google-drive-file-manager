@@ -9,7 +9,7 @@
  * Google Drive のファイルパスに関するユーティリティ.
  *
  */
-const Paths = {
+class Paths {
 
     /**
      *
@@ -23,9 +23,9 @@ const Paths = {
      *     file がフォルダである場合は false.
      *
      */
-    isFile: function(file) {
+    static isFile(file) {
         return !file.addFile
-    },
+    }
 
     /**
      *
@@ -39,9 +39,9 @@ const Paths = {
      *     file がファイルである場合は false.
      *
      */
-    isFolder: function(file) {
+    static isFolder(file) {
         return !!file.addFile
-    },
+    }
 
     /**
      *
@@ -51,9 +51,9 @@ const Paths = {
      *     Google Drive のルートフォルダ.
      *
      */
-    getRootFolder: function() {
+    static getRootFolder() {
         return DriveApp.getRootFolder()
-    },
+    }
 
     /**
      *
@@ -63,11 +63,11 @@ const Paths = {
      *     このスクリプトが関連付く Spreadsheet が保存されているフォルダ.
      *
      */
-    getCurrentFolder: function() {
+    static getCurrentFolder() {
         const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
         const spreadsheetFile = DriveApp.getFileById(spreadsheet.getId())
         return spreadsheetFile.getParents().next()
-    },
+    }
 
     /**
      *
@@ -80,11 +80,11 @@ const Paths = {
      *     Folder オブジェクト.
      *
      */
-    getFolderByUrl: function(url) {
+    static getFolderByUrl(url) {
         const urlPrefix = "https://drive.google.com/drive/folders/"
         const folderId = url.replace(urlPrefix, "").split("?")[0]
         return DriveApp.getFolderById(folderId)
-    },
+    }
 
     /**
      *
@@ -100,7 +100,7 @@ const Paths = {
      *     パスを連結した文字列.
      *
      */
-    join: function(paths, pathSeparator) {
+    static join(paths, pathSeparator) {
         var value = ""
         var separator = ""
         paths.forEach(path => {
@@ -108,7 +108,7 @@ const Paths = {
             separator = pathSeparator
         })
         return value
-    },
+    }
 
 }
 
@@ -117,7 +117,7 @@ const Paths = {
  * Google Spreadsheet のシートに関するユーティリティ.
  *
  */
-const Sheets = {
+class Sheets {
 
     /**
      *
@@ -133,7 +133,7 @@ const Sheets = {
      *     取得もしくは作成したシート.
      *
      */
-    getOrCreateSheetByName: function(spreadsheet, sheetName) {
+    static getOrCreateSheetByName(spreadsheet, sheetName) {
         const sheet = spreadsheet.getSheetByName(sheetName)
         if (sheet) {
             return sheet
@@ -142,7 +142,7 @@ const Sheets = {
             newSheet.setName(sheetName)
             return newSheet
         }
-    },
+    }
 
     /**
      *
@@ -155,7 +155,7 @@ const Sheets = {
      *     range の 1 行目をキーとした辞書の配列.
      *
      */
-    getTableAsDictArray: function(range) {
+    static getTableAsDictArray(range) {
         const values = range.getValues()
         const dictArray = []
 
@@ -167,7 +167,7 @@ const Sheets = {
             dictArray.push(dict)
         }
         return dictArray
-    },
+    }
 
 }
 
@@ -176,7 +176,7 @@ const Sheets = {
  * Google Spreadsheet のセルに関するユーティリティ.
  *
  */
-const Cells = {
+class Cells {
 
     /**
      *
@@ -192,10 +192,10 @@ const Cells = {
      *     設定する値.
      *
      */
-    setValue: function(range, value) {
+    static setValue(range, value) {
         range.setValue(value)
         range.setNumberFormat("General")
-    },
+    }
 
     /**
      *
@@ -209,10 +209,10 @@ const Cells = {
      *     数値を指定するか "=ROW()" のように数値に評価される数式を指定する.
      *
      */
-    setNumber: function(range, value) {
+    static setNumber(range, value) {
         range.setValue(value)
         range.setNumberFormat("0")
-    },
+    }
 
     /**
      *
@@ -225,10 +225,10 @@ const Cells = {
      *     設定する値.
      *
      */
-    setText: function(range, value) {
+    static setText(range, value) {
         range.setValue(value)
         range.setNumberFormat("@")
-    },
+    }
 
     /**
      *
@@ -244,12 +244,12 @@ const Cells = {
      *     表示文字列.
      *
      */
-    setTextLink: function(range, url, value) {
+    static setTextLink(range, url, value) {
         value = value.replace(/"/g, '""')
         range.setValue('=HYPERLINK("' + url + '", "' + value + '")')
         range.setNumberFormat("@")
         range.setShowHyperlink(true)
-    },
+    }
 
 }
 

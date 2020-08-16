@@ -4,7 +4,7 @@
  * ドキュメントインデックス.
  *
  */
-const DocumentIndex = {
+class DocumentIndex {
 
     /**
      *
@@ -14,19 +14,19 @@ const DocumentIndex = {
      *     メニュー.
      *
      */
-    createMenu: function() {
+    static createMenu() {
         const ui = SpreadsheetApp.getUi()
         const menu = ui.createMenu("File Manager")
         menu.addItem("Document Index...", "DocumentIndex.openDialog")
         return menu
-    },
+    }
 
     /**
      *
      * ドキュメントインデックス生成ダイアログを開く.
      *
      */
-    openDialog: function() {
+    static openDialog() {
         const settings = this.getSettings()
         const templateFileName = "document-index.dialog.template.html"
         const template = HtmlService.createTemplateFromFile(templateFileName)
@@ -40,7 +40,7 @@ const DocumentIndex = {
         const htmlOutput = template.evaluate().setWidth(600).setHeight(300)
         const ui = SpreadsheetApp.getUi()
         ui.showModelessDialog(htmlOutput, "Document Index")
-    },
+    }
 
     /**
      *
@@ -50,7 +50,7 @@ const DocumentIndex = {
      *     設定.
      *
      */
-    getSettings: function() {
+    static getSettings() {
         const settings = new DocumentIndexSettings()
         try {
             settings.load()
@@ -58,7 +58,7 @@ const DocumentIndex = {
             // シートからの読み込みに失敗した場合でもデフォルト値を返すため例外は無視する.
         }
         return settings
-    },
+    }
 
     /**
      *
@@ -68,7 +68,7 @@ const DocumentIndex = {
      *     ドキュメントインデックス生成ダイアログで指定されたオプション.
      *
      */
-    onGenerateButtonClicked: function(options) {
+    static onGenerateButtonClicked(options) {
         const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
         const sheet = Sheets.getOrCreateSheetByName(spreadsheet, options.outputSheetName)
         const rootFolder = Paths.getFolderByUrl(options.rootFolderUrl)
@@ -80,7 +80,7 @@ const DocumentIndex = {
             options.includeFiles,
             options.includeFolders)
         sheet.activate()
-    },
+    }
 
     /**
      *
@@ -107,10 +107,10 @@ const DocumentIndex = {
      *     結果にフォルダを含める場合は true.
      *
      */
-    generate: function(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders) {
+    static generate(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders) {
         const files = this.getFiles(rootFolder, maxDepth, includeFiles, includeFolders)
         this.updateSheet(sheet, files, pathSeparator)
-    },
+    }
 
     /**
      *
@@ -135,9 +135,9 @@ const DocumentIndex = {
      *     各要素は FilePath.routes を文字列連結した昇順にソートされている.
      *
      */
-    getFiles: function(rootFolder, maxDepth, includeFiles, includeFolders) {
+    static getFiles(rootFolder, maxDepth, includeFiles, includeFolders) {
         const filePaths = []
-        this.traverseFiles(rootFolder, maxDepth, function(parents, file) {
+        this.traverseFiles(rootFolder, maxDepth, (parents, file) => {
             if (Paths.isFile(file) && !includeFiles) {
                 return
             }
@@ -148,13 +148,13 @@ const DocumentIndex = {
             filePaths.push(new FilePath(file, parents, routes))
         })
 
-        filePaths.sort(function(lhs, rhs) {
+        filePaths.sort((lhs, rhs) => {
             const lhsSortKey = Paths.join(lhs.routes)
             const rhsSortKey = Paths.join(rhs.routes)
             return lhsSortKey.localeCompare(rhsSortKey)
         })
         return filePaths
-    },
+    }
 
     /**
      *
@@ -174,7 +174,7 @@ const DocumentIndex = {
      *     parents は rootFolder から file までのパス (file を含まない).
      *
      */
-    traverseFiles: function(rootFolder, maxDepth, callback) {
+    static traverseFiles(rootFolder, maxDepth, callback) {
         function traverse(parents, folder, depth, maxDepth, callback) {
             if (depth > maxDepth) {
                 return
@@ -195,7 +195,7 @@ const DocumentIndex = {
 
         callback([], rootFolder)
         traverse([], rootFolder, 1, maxDepth, callback)
-    },
+    }
 
     /**
      *
@@ -211,12 +211,12 @@ const DocumentIndex = {
      *     パスの区切り文字.
      *
      */
-    updateSheet: function(sheet, filePaths, pathSeparator) {
+    static updateSheet(sheet, filePaths, pathSeparator) {
         this.initializeSheet(sheet)
         this.updateHeaderRow(sheet)
         this.updateValueRows(sheet, filePaths, pathSeparator)
         this.doLayout(sheet)
-    },
+    }
 
     /**
      *
@@ -226,9 +226,9 @@ const DocumentIndex = {
      *     初期化対象の Sheet.
      *
      */
-    initializeSheet: function(sheet) {
+    static initializeSheet(sheet) {
         sheet.clear()
-    },
+    }
 
     /**
      *
@@ -238,13 +238,13 @@ const DocumentIndex = {
      *     更新対象の Sheet.
      *
      */
-    updateHeaderRow: function(sheet) {
+    static updateHeaderRow(sheet) {
         const headers = ["No.", "Type", "MIME Type", "File Path", "File Name"]
         const range = sheet.getRange(1, 1, 1, headers.length)
         range.setValues([headers])
         range.setBackground("orange")
         range.setHorizontalAlignment("center")
-    },
+    }
 
     /**
      *
@@ -260,12 +260,12 @@ const DocumentIndex = {
      *     パスの区切り文字.
      *
      */
-    updateValueRows: function(sheet, filePaths, pathSeparator) {
+    static updateValueRows(sheet, filePaths, pathSeparator) {
         for (var i = 0; i < filePaths.length; i++) {
             const rowIndex = i + 2
             this.updateValueRow(sheet, filePaths[i], pathSeparator, rowIndex)
         }
-    },
+    }
 
     /**
      *
@@ -284,7 +284,7 @@ const DocumentIndex = {
      *     更新対象の Sheet の行インデックス.
      *
      */
-    updateValueRow: function(sheet, filePath, pathSeparator, row) {
+    static updateValueRow(sheet, filePath, pathSeparator, row) {
         function setNoCell(column) {
             const range = sheet.getRange(row, column)
             Cells.setNumber(range, "=ROW() - 1")
@@ -324,18 +324,18 @@ const DocumentIndex = {
         setMimeTypeCell(column++)
         setFilePathCell(column++)
         setFileNameCell(column++)
-    },
+    }
 
     /**
      *
      * TODO コメントを書く.
      *
      */
-    doLayout: function(sheet) {
+    static doLayout(sheet) {
         const range = sheet.getDataRange()
         range.setVerticalAlignment("top")
         sheet.autoResizeColumns(range.getColumn(), range.getNumColumns())
-    },
+    }
 
 }
 
@@ -343,20 +343,29 @@ const DocumentIndex = {
  *
  * ファイルパスの情報を保持する.
  *
- * @param {File} file
- *     File オブジェクト.
- *
- * @param {Array.<File>} parents
- *     起点となるフォルダから file までのパス (file を含まない).
- *
- * @param {Array.<File>} routes
- *     起点となるフォルダから file までのパス (file を含む).
  */
-function FilePath(file, parents, routes) {
-    this.file = file
-    this.parents = parents
-    this.routes = routes
-    return this
+class FilePath {
+
+    /**
+     *
+     * インスタンスを初期化する.
+     *
+     * @param {File} file
+     *     File オブジェクト.
+     *
+     * @param {Array.<File>} parents
+     *     起点となるフォルダから file までのパス (file を含まない).
+     *
+     * @param {Array.<File>} routes
+     *     起点となるフォルダから file までのパス (file を含む).
+     *
+     */
+    constructor(file, parents, routes) {
+        this.file = file
+        this.parents = parents
+        this.routes = routes
+    }
+
 }
 
 /**
