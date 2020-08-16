@@ -55,7 +55,11 @@ class DocumentIndex {
         try {
             settings.load()
         } catch(exception) {
-            // シートからの読み込みに失敗した場合でもデフォルト値を返すため例外は無視する.
+            if (exception instanceof SettingsSheetNotFound) {
+                // シートが存在しない場合はデフォルト値を使用して処理を継続する.
+            } else {
+                throw exception
+            }
         }
         return settings
     }
