@@ -90,9 +90,9 @@ class Settings {
         this.keyPrefix = keyPrefix
         this.definitions = definitions
 
-        for (var i = 0; i < definitions.length; i++) {
-            this[definitions[i].key] = definitions[i].value
-        }
+        definitions.forEach(definition => {
+            this[definition.key] = definition.value
+        })
     }
 
     /**
