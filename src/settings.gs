@@ -189,66 +189,46 @@ class Settings {
      *
      */
     save() {
-        const sheet = this.getOrCreateSheet()
-        this.initializeSheet(sheet)
-        this.updateHeaderRow(sheet)
-        this.updateValueRows(sheet)
-        this.doLayout(sheet)
-        sheet.activate()
-    }
-
-    /**
-     *
-     * TODO コメントを書く.
-     *
-     */
-    initializeSheet(sheet) {
-        sheet.clear()
-    }
-
-    /**
-     *
-     * TODO コメントを書く.
-     *
-     */
-    updateHeaderRow(sheet) {
-        const range = sheet.getRange(1, 1, 1, Object.keys(this.headerNames).length)
-        const values = [
-            this.headerNames.key,
-            this.headerNames.type,
-            this.headerNames.value,
-            this.headerNames.description,
-        ]
-        range.setValues([values])
-        range.setBackground("orange")
-        range.setHorizontalAlignment("center")
-    }
-
-    /**
-     *
-     * TODO コメントを書く.
-     *
-     */
-    updateValueRows(sheet) {
-        for (var i = 0; i < this.definitions.length; i++) {
-            const key = this.keyPrefix + this.definitions[i].key
-            Cells.setValue(sheet.getRange(i + 2, 1), key)
-            Cells.setValue(sheet.getRange(i + 2, 2), this.definitions[i].type)
-            Cells.setValue(sheet.getRange(i + 2, 3), this[this.definitions[i].key])
-            Cells.setValue(sheet.getRange(i + 2, 4), this.definitions[i].description)
+        const prepareSheet = () => {
+            const sheet = this.getOrCreateSheet()
+            sheet.clear()
+            return sheet
         }
-    }
+        const updateHeaderRow = sheet => {
+            const values = [
+                this.headerNames.key,
+                this.headerNames.type,
+                this.headerNames.value,
+                this.headerNames.description,
+            ]
+            const range = sheet.getRange(1, 1, 1, values.length)
+            range.setValues([values])
+            range.setBackground("orange")
+            range.setHorizontalAlignment("center")
+        }
+        const updateValueRows = sheet => {
+            for (var i = 0; i < this.definitions.length; i++) {
+                const key = this.keyPrefix + this.definitions[i].key
+                const type = this.definitions[i].type
+                const value = this[this.definitions[i].key]
+                const description = this.definitions[i].description
+                Cells.setValue(sheet.getRange(i + 2, 1), key)
+                Cells.setValue(sheet.getRange(i + 2, 2), type)
+                Cells.setValue(sheet.getRange(i + 2, 3), value)
+                Cells.setValue(sheet.getRange(i + 2, 4), description)
+            }
+        }
+        const updateLayout = sheet => {
+            const range = sheet.getDataRange()
+            range.setVerticalAlignment("top")
+            range.setHorizontalAlignment("left")
+            sheet.autoResizeColumns(range.getColumn(), range.getNumColumns())
+        }
 
-    /**
-     *
-     * TODO コメントを書く.
-     *
-     */
-    doLayout(sheet) {
-        const range = sheet.getDataRange()
-        range.setVerticalAlignment("top")
-        range.setHorizontalAlignment("left")
-        sheet.autoResizeColumns(range.getColumn(), range.getNumColumns())
+        const sheet = prepareSheet()
+        updateHeaderRow(sheet)
+        updateValueRows(sheet)
+        updateLayout(sheet)
     }
 
 }
