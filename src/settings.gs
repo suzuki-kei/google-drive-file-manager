@@ -91,8 +91,35 @@ class Settings {
         this.definitions = definitions
 
         definitions.forEach(definition => {
-            this[definition.key] = definition.value
+            const key = definition.key
+            const type = definition.type
+            const value = definition.value
+            this.setItem(key, type, value)
         })
+    }
+
+    /**
+     *
+     * 設定を更新する.
+     *
+     * @param {string} key
+     *     設定項目のキー.
+     *
+     * @param {string} type
+     *     設定項目のデータ型.
+     *
+     * @param {object} value
+     *     設定項目の値.
+     *
+     * @throws {SettingsInvalidDataType}
+     *     設定項目の値が期待するデータ型ではない場合.
+     *
+     */
+    setItem(key, type, value) {
+        if (type != typeof(value)) {
+            throw new SettingsInvalidDataType(key, type, value)
+        }
+        this[key] = value
     }
 
     /**
@@ -152,10 +179,7 @@ class Settings {
             const key = dict[this.headerNames.key].substring(this.keyPrefix.length)
             const type = dict[this.headerNames.type]
             const value = dict[this.headerNames.value]
-            if (type != typeof(value)) {
-                throw new SettingsInvalidDataType(key, type, value)
-            }
-            this[key] = value
+            this.setItem(key, type, value)
         })
     }
 
