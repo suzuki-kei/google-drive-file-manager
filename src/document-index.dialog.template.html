@@ -12,7 +12,7 @@
             }
         </style>
         <script>
-            window.addEventListener("load", function() {
+            window.addEventListener("load", () => {
                 const inputElements = [
                     rootFolderUrl,
                     maxDepth,
@@ -23,19 +23,19 @@
                     saveSettings,
                     generate,
                 ]
-                function enableForm() {
+                const enableForm = () => {
                     const enable = _ => _.disabled = ""
                     inputElements.forEach(enable)
                 }
-                function disableForm() {
+                const disableForm = () => {
                     const disable = _ => _.disabled = "disabled"
                     inputElements.forEach(disable)
                 }
-                function onFailure(e) {
+                const onFailure = e => {
                     alert("ERROR: " + e)
                     enableForm()
                 }
-                function getSettings() {
+                const getSettings = () => {
                     return {
                         rootFolderUrl: rootFolderUrl.value,
                         maxDepth: maxDepth.value,
@@ -45,13 +45,13 @@
                         includeFolders: includeFolders.checked,
                     }
                 }
-                saveSettings.addEventListener("click", function() {
+                saveSettings.addEventListener("click", () => {
                     disableForm()
                     google.script.run.withSuccessHandler(enableForm)
                                      .withFailureHandler(onFailure)
                                      .DocumentIndex_saveSettings(getSettings())
                 })
-                generate.addEventListener("click", function() {
+                generate.addEventListener("click", () => {
                     disableForm()
                     google.script.run.withSuccessHandler(google.script.host.close)
                                      .withFailureHandler(onFailure)
