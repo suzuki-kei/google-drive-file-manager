@@ -21,7 +21,7 @@
                     includeFiles,
                     includeFolders,
                     saveSettings,
-                    generate,
+                    generateDocumentIndex,
                 ]
                 const enableForm = () => {
                     const enable = _ => _.disabled = ""
@@ -51,7 +51,7 @@
                                      .withFailureHandler(onFailure)
                                      .DocumentIndex_saveSettings(getSettings())
                 })
-                generate.addEventListener("click", () => {
+                generateDocumentIndex.addEventListener("click", () => {
                     disableForm()
                     google.script.run.withSuccessHandler(google.script.host.close)
                                      .withFailureHandler(onFailure)
@@ -101,7 +101,7 @@
         </fieldset>
         <div class="buttons">
             <input id="saveSettings" type="button" value="Save settings" />
-            <input id="generate" type="button" value="Generate" />
+            <input id="generateDocumentIndex" type="button" value="Generate document index" />
         </div>
     </body>
 </html>
