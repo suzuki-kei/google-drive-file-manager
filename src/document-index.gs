@@ -261,7 +261,7 @@ class DocumentIndex {
      *
      */
     static updateValueRows(sheet, filePaths, pathSeparator) {
-        for (var i = 0; i < filePaths.length; i++) {
+        for (let i = 0; i < filePaths.length; i++) {
             const rowIndex = i + 2
             this.updateValueRow(sheet, filePaths[i], pathSeparator, rowIndex)
         }
@@ -304,7 +304,7 @@ class DocumentIndex {
             const richText = SpreadsheetApp.newRichTextValue()
             richText.setText(Paths.join(filePath.routes, pathSeparator))
 
-            var startOffset = 0
+            let startOffset = 0
             filePath.routes.forEach(route => {
                 const endOffset = startOffset + route.getName().length
                 richText.setLinkUrl(startOffset, endOffset, route.getUrl())
@@ -318,7 +318,7 @@ class DocumentIndex {
             Cells.setTextLink(range, filePath.file.getUrl(), filePath.file.getName())
         }
 
-        var column = 1
+        let column = 1
         setNoCell(column++)
         setTypeCell(column++)
         setMimeTypeCell(column++)
@@ -375,7 +375,7 @@ class FilePath {
  */
 function DocumentIndex_saveSettings(newSettings) {
     const settings = new DocumentIndexSettings()
-    for (var key in newSettings) {
+    for (let key in newSettings) {
         settings[key] = newSettings[key]
     }
     settings.save()

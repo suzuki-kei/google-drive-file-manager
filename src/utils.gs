@@ -101,8 +101,8 @@ class Paths {
      *
      */
     static join(paths, pathSeparator) {
-        var value = ""
-        var separator = ""
+        let value = ""
+        let separator = ""
         paths.forEach(path => {
             value += separator + path.getName()
             separator = pathSeparator
@@ -159,9 +159,9 @@ class Sheets {
         const values = range.getValues()
         const dictArray = []
 
-        for (var row = 1; row < range.getNumRows(); row++) {
+        for (let row = 1; row < range.getNumRows(); row++) {
             const dict = {}
-            for (var column = 0; column < range.getNumColumns(); column++) {
+            for (let column = 0; column < range.getNumColumns(); column++) {
                 dict[values[0][column]] = values[row][column]
             }
             dictArray.push(dict)

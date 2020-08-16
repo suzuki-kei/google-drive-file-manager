@@ -207,7 +207,7 @@ class Settings {
             range.setHorizontalAlignment("center")
         }
         const updateValueRows = sheet => {
-            for (var i = 0; i < this.definitions.length; i++) {
+            for (let i = 0; i < this.definitions.length; i++) {
                 const key = this.keyPrefix + this.definitions[i].key
                 const type = this.definitions[i].type
                 const value = this[this.definitions[i].key]
