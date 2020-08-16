@@ -52,7 +52,11 @@ const DocumentIndex = {
      */
     getSettings: function() {
         const settings = new DocumentIndexSettings()
-        settings.load()
+        try {
+            settings.load()
+        } catch(exception) {
+            // シートからの読み込みに失敗した場合でもデフォルト値を返すため例外は無視する.
+        }
         return settings
     },
 
