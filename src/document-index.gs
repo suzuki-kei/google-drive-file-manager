@@ -175,7 +175,7 @@ class DocumentIndex {
      *
      */
     static traverseFiles(rootFolder, maxDepth, callback) {
-        function traverse(parents, folder, depth, maxDepth, callback) {
+        const traverse = (parents, folder, depth, maxDepth, callback) => {
             if (depth > maxDepth) {
                 return
             }
@@ -285,22 +285,22 @@ class DocumentIndex {
      *
      */
     static updateValueRow(sheet, filePath, pathSeparator, row) {
-        function setNoCell(column) {
+        const setNoCell = column => {
             const range = sheet.getRange(row, column)
             Cells.setNumber(range, "=ROW() - 1")
         }
-        function setTypeCell(column) {
+        const setTypeCell = column => {
             const range = sheet.getRange(row, column)
             const value = Paths.isFile(filePath.file) ? "File" : "Directory"
             Cells.setText(range, value)
         }
-        function setMimeTypeCell(column) {
+        const setMimeTypeCell = column => {
             const range = sheet.getRange(row, column)
             if (Paths.isFile(filePath.file)) {
                 Cells.setText(range, filePath.file.getMimeType())
             }
         }
-        function setFilePathCell(column) {
+        const setFilePathCell = column => {
             const richText = SpreadsheetApp.newRichTextValue()
             richText.setText(Paths.join(filePath.routes, pathSeparator))
 
@@ -313,7 +313,7 @@ class DocumentIndex {
             const range = sheet.getRange(row, column)
             range.setRichTextValue(richText.build())
         }
-        function setFileNameCell(column) {
+        const setFileNameCell = column => {
             const range = sheet.getRange(row, column)
             Cells.setTextLink(range, filePath.file.getUrl(), filePath.file.getName())
         }
