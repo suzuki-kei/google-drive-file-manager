@@ -55,7 +55,7 @@ class DocumentIndex {
         try {
             settings.load()
         } catch(exception) {
-            if (exception instanceof SettingsSheetNotFound) {
+            if (exception instanceof Settings.SheetNotFound) {
                 // シートが存在しない場合はデフォルト値を使用して処理を継続する.
             } else {
                 throw exception

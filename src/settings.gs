@@ -1,54 +1,6 @@
 
 /**
  *
- * 設定シートが存在しないことを表す例外.
- *
- */
-class SettingsSheetNotFound extends Error {
-
-    /**
-     *
-     * インスタンスを初期化する.
-     *
-     * @param {string} sheetName
-     *     シート名.
-     *
-     */
-    constructor(sheetName) {
-        super("Sheet Not Found: " + sheetName)
-    }
-
-}
-
-/**
- *
- * 設定項目の値が期待するデータ型ではないことを表す例外.
- *
- */
-class SettingsInvalidDataType extends Error {
-
-    /**
-     *
-     * インスタンスを初期化する.
-     *
-     * @param {string} key
-     *     設定項目のキー.
-     *
-     * @param {string} type
-     *     設定項目のデータ型.
-     *
-     * @param {object} value
-     *     設定項目の値.
-     *
-     */
-    constructor(key, type, value) {
-        super("The " + key + " is must be " + type + ", but was " + typeof(value) + ".")
-    }
-
-}
-
-/**
- *
  * シートに対して設定情報を読み書きする機能を提供する.
  *
  * シートの 1 行目をヘッダとし, 2 行目以降を設定項目として扱う.
@@ -111,13 +63,13 @@ class Settings {
      * @param {object} value
      *     設定項目の値.
      *
-     * @throws {SettingsInvalidDataType}
+     * @throws {Settings.InvalidDataType}
      *     設定項目の値が期待するデータ型ではない場合.
      *
      */
     setItem(key, type, value) {
         if (type != typeof(value)) {
-            throw new SettingsInvalidDataType(key, type, value)
+            throw new Settings.InvalidDataType(key, type, value)
         }
         this[key] = value
     }
@@ -129,7 +81,7 @@ class Settings {
      * @return {Sheet}
      *     設定を保持するシート.
      *
-     * @throws {SettingsSheetNotFound}
+     * @throws {Settings.SheetNotFound}
      *     シートが存在しない場合.
      *
      */
@@ -137,7 +89,7 @@ class Settings {
         const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
         const sheet = spreadsheet.getSheetByName(this.sheetName)
         if (sheet === null) {
-            throw new SettingsSheetNotFound(this.sheetName)
+            throw new Settings.SheetNotFound(this.sheetName)
         }
         return sheet
     }
@@ -160,10 +112,10 @@ class Settings {
      *
      * Sheet から設定情報を読み込む.
      *
-     * @throws {SettingsSheetNotFound}
+     * @throws {Settings.SheetNotFound}
      *     シートが存在しない場合.
      *
-     * @throws {SettingsInvalidDataType}
+     * @throws {Settings.InvalidDataType}
      *     設定項目の値が期待するデータ型ではない場合.
      *
      */
@@ -229,6 +181,54 @@ class Settings {
         updateHeaderRow(sheet)
         updateValueRows(sheet)
         updateLayout(sheet)
+    }
+
+}
+
+/**
+ *
+ * 設定シートが存在しないことを表す例外.
+ *
+ */
+Settings.SheetNotFound = class extends Error {
+
+    /**
+     *
+     * インスタンスを初期化する.
+     *
+     * @param {string} sheetName
+     *     シート名.
+     *
+     */
+    constructor(sheetName) {
+        super("Sheet Not Found: " + sheetName)
+    }
+
+}
+
+/**
+ *
+ * 設定項目の値が期待するデータ型ではないことを表す例外.
+ *
+ */
+Settings.InvalidDataType = class extends Error {
+
+    /**
+     *
+     * インスタンスを初期化する.
+     *
+     * @param {string} key
+     *     設定項目のキー.
+     *
+     * @param {string} type
+     *     設定項目のデータ型.
+     *
+     * @param {object} value
+     *     設定項目の値.
+     *
+     */
+    constructor(key, type, value) {
+        super("The " + key + " is must be " + type + ", but was " + typeof(value) + ".")
     }
 
 }
