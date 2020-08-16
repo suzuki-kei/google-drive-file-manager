@@ -1,7 +1,66 @@
 
 /**
  *
- * 設定.
+ * 設定シートが存在しないことを表す例外.
+ *
+ */
+class SettingsSheetNotFound extends Error {
+
+    /**
+     *
+     * インスタンスを初期化する.
+     *
+     * @param {string} sheetName
+     *     シート名.
+     *
+     */
+    constructor(sheetName) {
+        super("Sheet Not Found: " + sheetName)
+    }
+
+}
+
+/**
+ *
+ * 設定項目の値が期待するデータ型ではないことを表す例外.
+ *
+ */
+class SettingsInvalidDataType extends Error {
+
+    /**
+     *
+     * インスタンスを初期化する.
+     *
+     * @param {string} key
+     *     設定項目のキー.
+     *
+     * @param {string} type
+     *     設定項目のデータ型.
+     *
+     * @param {object} value
+     *     設定項目の値.
+     *
+     */
+    constructor(key, type, value) {
+        super("The " + key + " is must be " + type + ", but was " + typeof(value) + ".")
+    }
+
+}
+
+/**
+ *
+ * シートに対して設定情報を読み書きする機能を提供する.
+ *
+ * シートの 1 行目をヘッダとし, 2 行目以降を設定項目として扱う.
+ *
+ * 設定項目は {キー, データ型, 値, 説明} で構成され,
+ * インスタンスのフィールドを経由してアクセスすることができる.
+ * そのためキーは JavaScript の識別子として使用可能な名前である必要がある.
+ *
+ * この制限を見かけ上回避するために,
+ * コンストラクタでキーのプレフィックスを指定できる.
+ * Settings.load(), Settings.save() はシートに読み書きするときに,
+ * キーに対して自動的にプレフィックスを除去もしくは付加する.
  *
  */
 class Settings {
@@ -10,11 +69,25 @@ class Settings {
      *
      * インスタンスを初期化する.
      *
-     * @param {Array.<{key: string, type: string, value: object, description: string}>}
+     * @param {string} sheetName
+     *     設定情報を保持するシートの名前.
+     *
+     * @param {{key: string, type: string, value: string, description: string}} headerNames
+     *     設定情報を保持するシートのヘッダ名.
+     *     key, type, value, description にはそれぞれ
+     *     設定項目のキー, データ型, 値, 説明を保持するヘッダの名前を指定する.
+     *
+     * @param {string} keyPrefix
+     *     設定項目のキーのプレフィックス.
+     *
+     * @param {Array.<{key: string, type: string, value: object, description: string}>} definitions
      *     設定項目の情報 (キー, データ型, 初期値, 説明).
      *
      */
-    constructor(definitions) {
+    constructor(sheetName, headerNames, keyPrefix, definitions) {
+        this.sheetName = sheetName
+        this.headerNames = headerNames
+        this.keyPrefix = keyPrefix
         this.definitions = definitions
 
         for (var i = 0; i < definitions.length; i++) {
@@ -24,46 +97,63 @@ class Settings {
 
     /**
      *
-     * Sheet から設定情報を読み込む.
+     * 設定を保持するシートを取得する.
      *
-     * Sheet の 1 行目はヘッダ, 2 列目以降を値として扱う.
-     * 読み込んだ設定はインスタンスフィールドに設定される.
+     * @return {Sheet}
+     *     設定を保持するシート.
      *
-     * @param {Sheet} sheet
-     *     設定情報を保持する Sheet.
-     *
-     * @param {Array.<string>} scopes
-     *     設定情報のスコープ.
-     *     例えば ["A", "B"] を指定すると "A.B." から始まる設定のみ読み込む.
-     *
-     * @param {string} keyColumn
-     *     設定のキーを保持する列の名前.
-     *
-     * @param {string} typeColumn
-     *     設定のデータ型を保持する列の名前.
-     *
-     * @param {string} valueColumn
-     *     設定の値を保持する列の名前.
-     *
-     * @throws {string}
-     *     typeColumn で指定されるデータ型と
-     *     valueColumn で指定される値の型が異なる場合.
+     * @throws {SettingsSheetNotFound}
+     *     シートが存在しない場合.
      *
      */
-    load(sheet, scopes, keyColumn, typeColumn, valueColumn) {
+    getSheet() {
+        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+        const sheet = spreadsheet.getSheetByName(this.sheetName)
+        if (sheet === null) {
+            throw new SettingsSheetNotFound(this.sheetName)
+        }
+        return sheet
+    }
+
+    /**
+     *
+     * 設定を保持するシートを取得もしくは作成する.
+     *
+     * @return {Sheet}
+     *     設定を保持するシート.
+     *     シートが存在しない場合は新しく作成した空のシート.
+     *
+     */
+    getOrCreateSheet() {
+        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+        return Sheets.getOrCreateSheetByName(spreadsheet, this.sheetName)
+    }
+
+    /**
+     *
+     * Sheet から設定情報を読み込む.
+     *
+     * @throws {SettingsSheetNotFound}
+     *     シートが存在しない場合.
+     *
+     * @throws {SettingsInvalidDataType}
+     *     設定項目の値が期待するデータ型ではない場合.
+     *
+     */
+    load() {
+        const sheet = this.getSheet()
         const range = sheet.getDataRange()
         const dictArray = Sheets.getTableAsDictArray(range)
-        const scopePrefix = scopes.concat("").join(".")
 
         dictArray.forEach(dict => {
-            if (!dict[keyColumn].startsWith(scopePrefix)) {
+            if (!dict[this.headerNames.key].startsWith(this.keyPrefix)) {
                 return
             }
-            const key = dict[keyColumn].substring(scopePrefix.length)
-            const type = dict[typeColumn]
-            const value = dict[valueColumn]
+            const key = dict[this.headerNames.key].substring(this.keyPrefix.length)
+            const type = dict[this.headerNames.type]
+            const value = dict[this.headerNames.value]
             if (type != typeof(value)) {
-                throw "The " + key + " is must be " + type + ", but was " + typeof(value) + "."
+                throw new SettingsInvalidDataType(key, type, value)
             }
             this[key] = value
         })
@@ -73,13 +163,12 @@ class Settings {
      *
      * 設定情報をシートに保存する.
      *
-     * TODO コメントを書く.
-     *
      */
-    save(sheet, scopes, keyColumn, typeColumn, valueColumn, descriptionColumn) {
+    save() {
+        const sheet = this.getOrCreateSheet()
         this.initializeSheet(sheet)
-        this.updateHeaderRow(sheet, keyColumn, typeColumn, valueColumn, descriptionColumn)
-        this.updateValueRows(sheet, scopes)
+        this.updateHeaderRow(sheet)
+        this.updateValueRows(sheet)
         this.doLayout(sheet)
         sheet.activate()
     }
@@ -98,10 +187,15 @@ class Settings {
      * TODO コメントを書く.
      *
      */
-    updateHeaderRow(sheet, keyColumn, typeColumn, valueColumn, descriptionColumn) {
-        const headers = [keyColumn, typeColumn, valueColumn, descriptionColumn]
-        const range = sheet.getRange(1, 1, 1, headers.length)
-        range.setValues([headers])
+    updateHeaderRow(sheet) {
+        const range = sheet.getRange(1, 1, 1, Object.keys(this.headerNames).length)
+        const values = [
+            this.headerNames.key,
+            this.headerNames.type,
+            this.headerNames.value,
+            this.headerNames.description,
+        ]
+        range.setValues([values])
         range.setBackground("orange")
         range.setHorizontalAlignment("center")
     }
@@ -111,9 +205,9 @@ class Settings {
      * TODO コメントを書く.
      *
      */
-    updateValueRows(sheet, scopes) {
+    updateValueRows(sheet) {
         for (var i = 0; i < this.definitions.length; i++) {
-            const key = scopes.concat(this.definitions[i].key).join(".")
+            const key = this.keyPrefix + this.definitions[i].key
             Cells.setValue(sheet.getRange(i + 2, 1), key)
             Cells.setValue(sheet.getRange(i + 2, 2), this.definitions[i].type)
             Cells.setValue(sheet.getRange(i + 2, 3), this[this.definitions[i].key])
@@ -148,70 +242,54 @@ class DocumentIndexSettings extends Settings {
      *
      */
     constructor() {
-        super([
+        super(
+            "Settings",
             {
-                key: "rootFolderUrl",
-                type: "string",
-                value: Paths.getCurrentFolder().getUrl(),
-                description: "探索の起点とするフォルダの URL.",
+                key: "Key",
+                type: "Type",
+                value: "Value",
+                description: "Description",
             },
-            {
-                key: "maxDepth",
-                type: "number",
-                value: 5,
-                description: "再帰的にサブフォルダを探索するときの最大の深さ.",
-            },
-            {
-                key: "outputSheetName",
-                type: "string",
-                value: "Document Index",
-                description: "結果を出力するシートの名前.",
-            },
-            {
-                key: "pathSeparator",
-                type: "string",
-                value: " > ",
-                description: "パスの区切りに使用する文字列.",
-            },
-            {
-                key: "includeFiles",
-                type: "boolean",
-                value: true,
-                description: "結果にファイルを含める場合に真.",
-            },
-            {
-                key: "includeFolders",
-                type: "boolean",
-                value: true,
-                description: "結果にフォルダを含める場合に真.",
-            },
-        ])
-    }
-
-    /**
-     *
-     * Sheet から設定情報を読み込む.
-     *
-     */
-    load() {
-        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-        const sheet = spreadsheet.getSheetByName("Settings")
-        if (sheet) {
-            const scopes = ["FileManager", "DocumentIndex"]
-            super.load(sheet, scopes, "Key", "Type", "Value")
-        }
-    }
-
-    /**
-     *
-     * Sheet に設定情報を書き込む.
-     *
-     */
-    save() {
-        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, "Settings")
-        const scopes = ["FileManager", "DocumentIndex"]
-        super.save(sheet, scopes, "Key", "Type", "Value", "Description")
+            "FileManager.DocumentIndex.",
+            [
+                {
+                    key: "rootFolderUrl",
+                    type: "string",
+                    value: Paths.getCurrentFolder().getUrl(),
+                    description: "探索の起点とするフォルダの URL.",
+                },
+                {
+                    key: "maxDepth",
+                    type: "number",
+                    value: 5,
+                    description: "再帰的にサブフォルダを探索するときの最大の深さ.",
+                },
+                {
+                    key: "outputSheetName",
+                    type: "string",
+                    value: "Document Index",
+                    description: "結果を出力するシートの名前.",
+                },
+                {
+                    key: "pathSeparator",
+                    type: "string",
+                    value: " > ",
+                    description: "パスの区切りに使用する文字列.",
+                },
+                {
+                    key: "includeFiles",
+                    type: "boolean",
+                    value: true,
+                    description: "結果にファイルを含める場合に真.",
+                },
+                {
+                    key: "includeFolders",
+                    type: "boolean",
+                    value: true,
+                    description: "結果にフォルダを含める場合に真.",
+                },
+            ]
+        )
     }
 
 }
