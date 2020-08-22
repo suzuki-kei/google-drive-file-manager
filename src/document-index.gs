@@ -236,7 +236,7 @@ class DocumentIndex {
             const row = count + 2
             this.updateValueRow(sheet, filePath, pathSeparator, row)
 
-            if (count++ % updateInterval  == updateInterval - 1) {
+            if (count++ % updateInterval == updateInterval - 1) {
                 SpreadsheetApp.flush()
             }
         })
