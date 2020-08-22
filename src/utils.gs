@@ -81,6 +81,9 @@ class Paths {
      *
      */
     static getFolderByUrl(url) {
+        if (url === "https://drive.google.com/drive/my-drive") {
+            return DriveApp.getRootFolder()
+        }
         const urlPrefix = "https://drive.google.com/drive/folders/"
         const folderId = url.replace(urlPrefix, "").split("?")[0]
         return DriveApp.getFolderById(folderId)
