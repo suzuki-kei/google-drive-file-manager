@@ -119,16 +119,11 @@ class DocumentIndex {
      *
      */
     static onGenerateDocumentIndexClicked(rawSettings) {
-        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, rawSettings.outputSheetName)
-        const rootFolder = Paths.getFolderByUrl(rawSettings.rootFolderUrl)
-        this.generate(
-            sheet,
-            rootFolder,
-            rawSettings.maxDepth,
-            rawSettings.pathSeparator,
-            rawSettings.includeFiles,
-            rawSettings.includeFolders)
+        const settings = this.getSettings()
+        settings.outputSheetName = rawSettings.outputSheetName
+        settings.rootFolderUrl = rawSettings.rootFolderUrl
+
+        const sheet = this.generate(settings)
         sheet.activate()
     }
 
@@ -142,48 +137,34 @@ class DocumentIndex {
      */
     static onScheduleTriggered() {
         const settings = this.getSettings()
-        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, settings.outputSheetName)
-        const rootFolder = Paths.getFolderByUrl(settings.rootFolderUrl)
-        this.generate(
-            sheet,
-            rootFolder,
-            settings.maxDepth,
-            settings.pathSeparator,
-            settings.includeFiles,
-            settings.includeFolders)
+        this.generate(settings)
     }
 
     /**
      *
      * ドキュメントインデックスを生成する.
      *
-     * @param {Sheet} sheet
-     *     このシートに結果を出力する.
+     * @param {DocumentIndexSettings} settings
+     *     設定.
      *
-     * @param {Folder} rootFolder
-     *     このフォルダ以下を探索する.
-     *
-     * @param {number} maxDepth
-     *     探索する最大の深さ.
-     *     1 を指定すると rootFolder 直下が対象となる.
-     *     2 を指定すると rootFolder 直下とサブフォルダが対象となる.
-     *
-     * @param {string} pathSeparator
-     *     パスの区切り文字.
-     *
-     * @param {boolean} includeFiles
-     *     結果にファイルを含める場合は true.
-     *
-     * @param {boolean} includeFolders
-     *     結果にフォルダを含める場合は true.
+     * @return {Sheet}
+     *     生成したドキュメントインデックス.
      *
      */
-    static generate(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders) {
+    static generate(settings) {
+        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+        const sheet = Sheets.getOrCreateSheetByName(spreadsheet, settings.outputSheetName)
+        const rootFolder = Paths.getFolderByUrl(settings.rootFolderUrl)
+        const maxDepth = settings.maxDepth
+        const pathSeparator = settings.pathSeparator
+        const includeFiles = settings.includeFiles
+        const includeFolders = settings.includeFolders
+
         this.initializeSheet(sheet)
         this.updateHeaderRow(sheet)
         this.updateValueRows(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders)
         this.updateLayout(sheet)
+        return sheet
     }
 
     /**
