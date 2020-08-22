@@ -264,8 +264,6 @@ class DocumentIndex {
                 callback(parents.concat(folder), file)
             }
         }
-
-        callback([], rootFolder)
         traverse([], rootFolder, 1, maxDepth, callback)
     }
 
