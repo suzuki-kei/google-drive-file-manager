@@ -18,7 +18,31 @@ class DocumentIndex {
         const ui = SpreadsheetApp.getUi()
         const menu = ui.createMenu("File Manager")
         menu.addItem("Document Index...", "DocumentIndex.openDialog")
+        menu.addItem("Rename", "DocumentIndex.rename")
         return menu
+    }
+
+    /**
+     *
+     * ファイル名を変更する.
+     *
+     */
+    static rename() {
+        const settings = this.getSettings()
+        const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+        const sheet = spreadsheet.getSheetByName(settings.outputSheetName)
+        const range = sheet.getDataRange()
+        const dictionaries = Sheets.getTableAsRichTextDictionaries(range)
+
+        dictionaries.forEach(dict => {
+            const fileUrl = dict["File Name"].getLinkUrl()
+            const fileName = dict["File Name"].getText()
+            const newFileName = dict["New File Name"].getText()
+            if (newFileName) {
+                const file = Paths.getFileByUrl(fileUrl)
+                file.setName(newFileName)
+            }
+        })
     }
 
     /**
@@ -287,7 +311,7 @@ class DocumentIndex {
      *
      */
     static updateHeaderRow(sheet) {
-        const headers = ["No.", "Type", "MIME Type", "File Path", "File Name"]
+        const headers = ["No.", "Type", "MIME Type", "File Path", "File Name", "New File Name"]
         const range = sheet.getRange(1, 1, 1, headers.length)
         range.setValues([headers])
         range.setBackground("orange")

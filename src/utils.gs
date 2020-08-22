@@ -71,6 +71,36 @@ class Paths {
 
     /**
      *
+     * ファイルやフォルダの URL から ID を取得する.
+     *
+     * @param {string} url
+     *     ファイルやフォルダの URL.
+     *
+     * @return {string}
+     *     ファイルやフォルダの ID.
+     *
+     */
+    static getIdFromUrl(url) {
+        return url.split("/")[5]
+    }
+
+    /**
+     *
+     * ファイルの URL から File オブジェクトを取得する.
+     *
+     * @param {string} url
+     *     ファイルの URL.
+     *
+     * @return {string}
+     *     File オブジェクト.
+     *
+     */
+    static getFileByUrl(url) {
+        return DriveApp.getFileById(this.getIdFromUrl(url))
+    }
+
+    /**
+     *
      * フォルダの URL から Folder オブジェクトを取得する.
      *
      * @param {string} url
@@ -84,9 +114,7 @@ class Paths {
         if (url === "https://drive.google.com/drive/my-drive") {
             return DriveApp.getRootFolder()
         }
-        const urlPrefix = "https://drive.google.com/drive/folders/"
-        const folderId = url.replace(urlPrefix, "").split("?")[0]
-        return DriveApp.getFolderById(folderId)
+        return DriveApp.getFolderById(this.getIdFromUrl(url))
     }
 
     /**
@@ -170,6 +198,31 @@ class Sheets {
             dictArray.push(dict)
         }
         return dictArray
+    }
+
+    /**
+     *
+     * Range の内容を RichText の辞書配列として取得する.
+     *
+     * @param {Range}
+     *     値を取得する範囲.
+     *
+     * @return {Array.<object>}
+     *     range の一行目をキーとした辞書の配列.
+     *
+     */
+    static getTableAsRichTextDictionaries(range) {
+        const values = range.getRichTextValues()
+        const dictionaries = []
+
+        for (let row = 1; row < range.getNumRows(); row++) {
+            const dictionary = {}
+            for (let column = 0; column < range.getNumColumns(); column++) {
+                dictionary[values[0][column].getText()] = values[row][column]
+            }
+            dictionaries.push(dictionary)
+        }
+        return dictionaries
     }
 
 }
