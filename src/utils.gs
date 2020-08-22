@@ -177,7 +177,7 @@ class Sheets {
 
     /**
      *
-     * Range の内容を辞書の配列として取得する.
+     * Range の内容をテキストの辞書配列として取得する.
      *
      * @param {Range} range
      *     値を取得する範囲.
@@ -186,18 +186,18 @@ class Sheets {
      *     range の 1 行目をキーとした辞書の配列.
      *
      */
-    static getTableAsDictArray(range) {
+    static getTableAsTextDictionaries(range) {
         const values = range.getValues()
-        const dictArray = []
+        const dictionaries = []
 
         for (let row = 1; row < range.getNumRows(); row++) {
-            const dict = {}
+            const dictionary = {}
             for (let column = 0; column < range.getNumColumns(); column++) {
-                dict[values[0][column]] = values[row][column]
+                dictionary[values[0][column]] = values[row][column]
             }
-            dictArray.push(dict)
+            dictionaries.push(dictionary)
         }
-        return dictArray
+        return dictionaries
     }
 
     /**

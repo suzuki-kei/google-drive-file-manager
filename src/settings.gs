@@ -122,9 +122,9 @@ class Settings {
     load() {
         const sheet = this.getSheet()
         const range = sheet.getDataRange()
-        const dictArray = Sheets.getTableAsDictArray(range)
+        const dictionaries = Sheets.getTableAsTextDictionaries(range)
 
-        dictArray.forEach(dict => {
+        dictionaries.forEach(dict => {
             if (!dict[this.headerNames.key].startsWith(this.keyPrefix)) {
                 return
             }
