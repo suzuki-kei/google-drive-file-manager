@@ -306,7 +306,6 @@ class DocumentIndex {
     static updateLayout(sheet) {
         const range = sheet.getDataRange()
         range.setVerticalAlignment("top")
-        sheet.autoResizeColumns(range.getColumn(), range.getNumColumns())
     }
 
 }
