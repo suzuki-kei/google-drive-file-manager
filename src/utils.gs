@@ -45,18 +45,6 @@ class Paths {
 
     /**
      *
-     * Google Drive のルートフォルダを取得する.
-     *
-     * @preturn {File}
-     *     Google Drive のルートフォルダ.
-     *
-     */
-    static getRootFolder() {
-        return DriveApp.getRootFolder()
-    }
-
-    /**
-     *
      * このスクリプトが関連付く Spreadsheet が保存されているフォルダを取得する.
      *
      * @preturn {File}
