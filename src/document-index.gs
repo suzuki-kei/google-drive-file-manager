@@ -271,7 +271,8 @@ class DocumentIndex {
         }
         const setFilePathCell = column => {
             const richText = SpreadsheetApp.newRichTextValue()
-            richText.setText(Paths.join(filePath.routes, pathSeparator))
+            const names = filePath.routes.map(path => path.getName())
+            richText.setText(names.join(pathSeparator))
 
             let startOffset = 0
             filePath.routes.forEach(route => {

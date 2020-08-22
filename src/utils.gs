@@ -107,30 +107,6 @@ class Paths {
 
     /**
      *
-     * パスを連結する.
-     *
-     * @param {Array.<File>} paths
-     *     連結するパス.
-     *
-     * @param {string} pathSeparator
-     *     パスの区切り文字.
-     *
-     * @return {string}
-     *     パスを連結した文字列.
-     *
-     */
-    static join(paths, pathSeparator) {
-        let value = ""
-        let separator = ""
-        paths.forEach(path => {
-            value += separator + path.getName()
-            separator = pathSeparator
-        })
-        return value
-    }
-
-    /**
-     *
      * 指定したフォルダに含まれるファイルを探索する.
      *
      * @param {Folder} rootFolder
