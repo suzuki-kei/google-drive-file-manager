@@ -180,13 +180,18 @@ class DocumentIndex {
      *
      */
     static generate(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders) {
-        const files = this.getFiles(rootFolder, maxDepth, includeFiles, includeFolders)
-        this.updateSheet(sheet, files, pathSeparator)
+        this.initializeSheet(sheet)
+        this.updateHeaderRow(sheet)
+        this.updateValueRows(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders)
+        this.updateLayout(sheet)
     }
 
     /**
      *
-     * 指定したフォルダに含まれるファイルを取得する.
+     * ヘッダ以外の行を更新する.
+     *
+     * @param {Sheet} sheet
+     *     更新対象の Sheet.
      *
      * @param {Folder} rootFolder
      *     このフォルダ以下を探索する.
@@ -196,19 +201,20 @@ class DocumentIndex {
      *     1 を指定すると rootFolder 直下が対象となる.
      *     2 を指定すると rootFolder 直下とサブフォルダが対象となる.
      *
+     * @param {string} pathSeparator
+     *     パスの区切り文字.
+     *
      * @param {boolean} includeFiles
      *     結果にファイルを含める場合は true.
      *
      * @param {boolean} includeFolders
      *     結果にフォルダを含める場合は true.
      *
-     * @return {Array.<FilePath>}
-     *     FilePath の配列.
-     *     各要素は FilePath.routes を文字列連結した昇順にソートされている.
-     *
      */
-    static getFiles(rootFolder, maxDepth, includeFiles, includeFolders) {
-        const filePaths = []
+    static updateValueRows(sheet, rootFolder, maxDepth, pathSeparator, includeFiles, includeFolders) {
+        let updateInterval = 10
+        let count = 0
+
         this.traverseFiles(rootFolder, maxDepth, (parents, file) => {
             if (Paths.isFile(file) && !includeFiles) {
                 return
@@ -217,15 +223,14 @@ class DocumentIndex {
                 return
             }
             const routes = parents.concat(file)
-            filePaths.push(new FilePath(file, parents, routes))
-        })
+            const filePath = new FilePath(file, parents, routes)
+            const row = count + 2
+            this.updateValueRow(sheet, filePath, pathSeparator, row)
 
-        filePaths.sort((lhs, rhs) => {
-            const lhsSortKey = Paths.join(lhs.routes)
-            const rhsSortKey = Paths.join(rhs.routes)
-            return lhsSortKey.localeCompare(rhsSortKey)
+            if (count++ % updateInterval  == updateInterval - 1) {
+                SpreadsheetApp.flush()
+            }
         })
-        return filePaths
     }
 
     /**
@@ -242,7 +247,7 @@ class DocumentIndex {
      *
      * @param {function} callback
      *     発見したファイル情報を受け取るコールバック関数.
-     *     callback(parents, file) という形式で呼び出される.
+     *     callback(index, parents, file) という形式で呼び出される.
      *     parents は rootFolder から file までのパス (file を含まない).
      *
      */
@@ -265,27 +270,6 @@ class DocumentIndex {
             }
         }
         traverse([], rootFolder, 1, maxDepth, callback)
-    }
-
-    /**
-     *
-     * ドキュメントインデックスのシートを更新する.
-     *
-     * @param {Sheet} sheet
-     *     更新対象の Sheet.
-     *
-     * @param {Array.<FilePath>} filePaths
-     *     シートに追加する FilePath の配列.
-     *
-     * @param {string} pathSeparator
-     *     パスの区切り文字.
-     *
-     */
-    static updateSheet(sheet, filePaths, pathSeparator) {
-        this.initializeSheet(sheet)
-        this.updateHeaderRow(sheet)
-        this.updateValueRows(sheet, filePaths, pathSeparator)
-        this.updateLayout(sheet)
     }
 
     /**
@@ -314,27 +298,6 @@ class DocumentIndex {
         range.setValues([headers])
         range.setBackground("orange")
         range.setHorizontalAlignment("center")
-    }
-
-    /**
-     *
-     * ヘッダ以外の行を更新する.
-     *
-     * @param {Sheet} sheet
-     *     更新対象の Sheet.
-     *
-     * @param {Array.<FilePath>} filePaths
-     *     シートに追加する FilePath の配列.
-     *
-     * @param {string} pathSeparator
-     *     パスの区切り文字.
-     *
-     */
-    static updateValueRows(sheet, filePaths, pathSeparator) {
-        for (let i = 0; i < filePaths.length; i++) {
-            const rowIndex = i + 2
-            this.updateValueRow(sheet, filePaths[i], pathSeparator, rowIndex)
-        }
     }
 
     /**
