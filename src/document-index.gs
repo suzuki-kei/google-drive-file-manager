@@ -309,7 +309,7 @@ class DocumentIndex {
      *
      */
     static updateHeaderRow(sheet) {
-        const headers = ["No.", "Type", "MIME Type", "File Path", "File Name", "New File Name"]
+        const headers = ["No.", "Type", "File Path", "File Name", "New File Name"]
         const range = sheet.getRange(1, 1, 1, headers.length)
         range.setValues([headers])
         range.setBackground("orange")
@@ -364,12 +364,6 @@ class DocumentIndex {
             const value = Paths.isFile(filePath.file) ? "File" : "Directory"
             Cells.setText(range, value)
         }
-        const setMimeTypeCell = column => {
-            const range = sheet.getRange(row, column)
-            if (Paths.isFile(filePath.file)) {
-                Cells.setText(range, filePath.file.getMimeType())
-            }
-        }
         const setFilePathCell = column => {
             const richText = SpreadsheetApp.newRichTextValue()
             richText.setText(Paths.join(filePath.routes, pathSeparator))
@@ -391,7 +385,6 @@ class DocumentIndex {
         let column = 1
         setNoCell(column++)
         setTypeCell(column++)
-        setMimeTypeCell(column++)
         setFilePathCell(column++)
         setFileNameCell(column++)
     }
