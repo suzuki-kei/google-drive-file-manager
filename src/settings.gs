@@ -277,7 +277,7 @@ class DocumentIndexSettings extends Settings {
                 {
                     key: "pathSeparator",
                     type: "string",
-                    value: " > ",
+                    value: " / ",
                     description: "パスの区切りに使用する文字列.",
                 },
                 {
