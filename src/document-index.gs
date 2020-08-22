@@ -169,6 +169,34 @@ class DocumentIndex {
 
     /**
      *
+     * Sheet を初期化する.
+     *
+     * @param {Sheet} sheet
+     *     初期化対象の Sheet.
+     *
+     */
+    static initializeSheet(sheet) {
+        sheet.clear()
+    }
+
+    /**
+     *
+     * ヘッダ行を更新する.
+     *
+     * @param {Sheet} sheet
+     *     更新対象の Sheet.
+     *
+     */
+    static updateHeaderRow(sheet) {
+        const headers = ["No.", "Type", "File Path", "File Name", "New File Name"]
+        const range = sheet.getRange(1, 1, 1, headers.length)
+        range.setValues([headers])
+        range.setBackground("orange")
+        range.setHorizontalAlignment("center")
+    }
+
+    /**
+     *
      * ヘッダ以外の行を更新する.
      *
      * @param {Sheet} sheet
@@ -251,34 +279,6 @@ class DocumentIndex {
             }
         }
         traverse([], rootFolder, 1, maxDepth, callback)
-    }
-
-    /**
-     *
-     * Sheet を初期化する.
-     *
-     * @param {Sheet} sheet
-     *     初期化対象の Sheet.
-     *
-     */
-    static initializeSheet(sheet) {
-        sheet.clear()
-    }
-
-    /**
-     *
-     * ヘッダ行を更新する.
-     *
-     * @param {Sheet} sheet
-     *     更新対象の Sheet.
-     *
-     */
-    static updateHeaderRow(sheet) {
-        const headers = ["No.", "Type", "File Path", "File Name", "New File Name"]
-        const range = sheet.getRange(1, 1, 1, headers.length)
-        range.setValues([headers])
-        range.setBackground("orange")
-        range.setHorizontalAlignment("center")
     }
 
     /**
