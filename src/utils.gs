@@ -141,6 +141,45 @@ class Paths {
         return value
     }
 
+    /**
+     *
+     * 指定したフォルダに含まれるファイルを探索する.
+     *
+     * @param {Folder} rootFolder
+     *     このフォルダ以下を探索する.
+     *
+     * @param {number} maxDepth
+     *     探索する最大の深さ.
+     *     1 を指定すると rootFolder 直下が対象となる.
+     *     2 を指定すると rootFolder 直下とサブフォルダが対象となる.
+     *
+     * @param {function} callback
+     *     発見したファイル情報を受け取るコールバック関数.
+     *     callback(index, parents, file) という形式で呼び出される.
+     *     parents は rootFolder から file までのパス (file を含まない).
+     *
+     */
+    static traverse(rootFolder, maxDepth, callback) {
+        const traverse = (parents, folder, depth, maxDepth, callback) => {
+            if (depth > maxDepth) {
+                return
+            }
+            const query = "'" + folder.getId() + "' in parents"
+            const subFolders = DriveApp.searchFolders(query)
+            while (subFolders.hasNext()) {
+                const subFolder = subFolders.next()
+                callback(parents.concat(folder), subFolder)
+                traverse(parents.concat(folder), subFolder, depth + 1, maxDepth, callback)
+            }
+            const files = DriveApp.searchFiles(query)
+            while (files.hasNext()) {
+                const file = files.next()
+                callback(parents.concat(folder), file)
+            }
+        }
+        traverse([], rootFolder, 1, maxDepth, callback)
+    }
+
 }
 
 /**
