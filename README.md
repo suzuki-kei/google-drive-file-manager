@@ -16,41 +16,25 @@ Google スプレッドシートのメニューから以下の操作が可能に�
 
 ## 使用方法
 
-(1) スプレッドシートを新規作成します.
-
-既存のスプレッドシートを使用しても構いません.
-
-(2) スクリプトエディタを開きます.
-
-スプレッドシートの以下のメニューを選択します.
-
-    ツール > スクリプトエディタ
-
-(3) スクリプト ID を確認します.
-
-スクリプトエディタの以下のメニューを選択します.
-
-    ファイル > プロジェクトのプロパティ
-
-(4) npm で依存パッケージをインストールします.
+(1) npm で依存パッケージをインストールします.
 
     $ npm install
 
-(5) clasp でログインします.
+(2) clasp でログインします.
 
     $ npm run clasp login
 
-(6) push 先の scriptId を設定します.
+(3) Google Apps Script のプロジェクトを作成します.
 
-    $ npm run clasp setting scriptId xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    $ npm run clasp create -- --type sheets --title 'Document Index' --rootDir src
 
-(7) clasp で push します.
+(4) clasp で push します.
 
     $ npm run clasp push
 
-(8) スプレッドシートを開き直します.
+(5) スプレッドシートを開きます.
 
-スプレッドシートを開き直すと, メニューに "File Manager" が表示されます.
+メニューに "File Manager" が表示されます.
 
 ## 各種コマンド
 
