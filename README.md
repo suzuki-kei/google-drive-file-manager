@@ -26,7 +26,7 @@ Google スプレッドシートのメニューから以下の操作が可能に�
 
 (3) Google Apps Script のプロジェクトを作成します.
 
-    $ npm run clasp create -- --type sheets --title 'Document Index' --rootDir src
+    $ npm run clasp create -- --type sheets --title 'File Manager' --rootDir src
 
 (4) clasp で push します.
 
