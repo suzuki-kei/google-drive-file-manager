@@ -12,7 +12,7 @@ Google スプレッドシートのメニューから以下の操作が可能に�
 
 事前に以下がインストールされている必要があります.
 
- * clasp (https://github.com/google/clasp)
+ * npm (https://www.npmjs.com/)
 
 ## 使用方法
 
