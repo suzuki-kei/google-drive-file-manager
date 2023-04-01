@@ -5,7 +5,7 @@
   "main": "main.gs",
   "scripts": {
     "test": "echo OK",
-    "clasp": "$(npm bin)/clasp"
+    "clasp": "npm exec clasp"
   },
   "author": "SUZUKI Kei",
   "license": "MIT",
