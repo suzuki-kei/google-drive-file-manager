@@ -4,8 +4,7 @@
   "description": "Manage Google Drive files.",
   "main": "main.js",
   "scripts": {
-    "test": "echo OK",
-    "clasp": "npm exec clasp"
+    "test": "echo OK"
   },
   "author": "SUZUKI Kei",
   "license": "MIT",

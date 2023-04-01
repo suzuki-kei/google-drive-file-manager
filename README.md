@@ -22,15 +22,19 @@ Google スプレッドシートのメニューから以下の操作が可能に�
 
 (2) clasp でログインします.
 
-    $ npm run clasp login
+    $ npm exec -c 'clasp login'
 
 (3) Google Apps Script のプロジェクトを作成します.
 
-    $ npm run clasp create -- --type sheets --title 'File Manager' --rootDir src
+    $ npm exec -c 'clasp create --type sheets --title "File Manager" --rootDir src'
+
+NOTE: .clasp.json が生成される場所が間違っているようなので移動します.
+
+    $ mv src/.clasp.json .
 
 (4) clasp で push します.
 
-    $ npm run clasp push
+    $ npm exec -c 'clasp push'
 
 (5) スプレッドシートを開きます.
 
@@ -40,14 +44,14 @@ Google スプレッドシートのメニューから以下の操作が可能に�
 
 clasp のヘルプを表示する:
 
-    $ npm run clasp help
+    $ npm exec -c 'clasp help'
 
 script.google.com に push する:
 
-    $ npm run clasp status
-    $ npm run clasp push
+    $ npm exec -c 'clasp status'
+    $ npm exec -c 'clasp push'
 
 ブラウザで開く:
 
-    $ npm run clasp open
+    $ npm exec -c 'clasp open'
 
